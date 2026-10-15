@@ -1,0 +1,2485 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<base target="_top">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INBIONUSA — Quality Control System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root{
+  --brand:#047857;--brand-dark:#065f46;--brand-deep:#064e3b;--brand-ink:#022c22;
+  --brand-soft:#ecfdf5;--brand-line:#a7f3d0;
+  --line:#e5e9ef;--line-strong:#cbd5e1;
+  --ink:#0f172a;--ink-2:#334155;--muted:#64748b;--muted-2:#94a3b8;
+  --canvas:#f1f5f9;
+  --danger:#b91c1c;--danger-soft:#fef2f2;
+  --warning:#b45309;--warning-soft:#fffbeb;
+  --info:#0369a1;--info-soft:#f0f9ff;
+  --topbar-h:58px;--sidebar-w:238px;
+  --r-sm:5px;--r:8px;--r-lg:10px;
+  --tr:160ms ease;
+  --shadow-sm:0 1px 2px rgba(15,23,42,.04);
+  --shadow:0 4px 16px -6px rgba(15,23,42,.12);
+  --font:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);background:var(--canvas);color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--brand-line);color:var(--brand-ink)}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:#94a3b8}
+
+/* ============ LOGIN (Redesigned) ============ */
+#login{
+  position:fixed;inset:0;z-index:9999;
+  background:#f1f5f9;
+  display:flex;align-items:stretch;
+  transition:opacity 300ms ease,visibility 300ms ease;
+  overflow:auto;
+}
+#login.hide{opacity:0;visibility:hidden;pointer-events:none}
+
+.login-shell{
+  display:grid;
+  grid-template-columns:1.05fr 1fr;
+  width:100%;min-height:100%;
+}
+
+/* --- Left brand panel --- */
+.login-brand{
+  position:relative;overflow:hidden;
+  background:#064e3b;
+  padding:56px 52px 40px;
+  display:flex;flex-direction:column;
+  color:#fff;
+}
+.login-brand::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(52,211,153,.25), transparent 42%),
+    radial-gradient(circle at 85% 85%, rgba(2,132,199,.22), transparent 45%);
+  pointer-events:none;
+}
+.login-brand::after{
+  content:'';position:absolute;
+  bottom:-140px;right:-140px;
+  width:380px;height:380px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.08);
+  pointer-events:none;
+}
+.login-brand > *{position:relative;z-index:1;animation:lbIn 500ms cubic-bezier(.2,.9,.3,1) both}
+.login-brand > *:nth-child(1){animation-delay:50ms}
+.login-brand > *:nth-child(2){animation-delay:120ms}
+.login-brand > *:nth-child(3){animation-delay:170ms}
+.login-brand > *:nth-child(4){animation-delay:220ms}
+.login-brand > *:nth-child(5){animation-delay:270ms}
+.login-brand > *:nth-child(6){animation-delay:320ms}
+@keyframes lbIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.lb-logo{
+  width:66px;height:66px;border-radius:12px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.14);
+  display:flex;align-items:center;justify-content:center;
+}
+.lb-logo img{max-height:46px;max-width:46px;object-fit:contain}
+.lb-title{
+  font-size:34px;font-weight:800;
+  letter-spacing:-.02em;
+  margin:24px 0 6px;
+}
+.lb-sub{
+  font-size:12.5px;color:rgba(255,255,255,.65);
+  letter-spacing:.1em;text-transform:uppercase;
+  margin:0;
+}
+.lb-sub strong{color:#38bdf8;font-weight:700}
+.lb-desc{
+  font-size:13.5px;color:rgba(255,255,255,.78);
+  line-height:1.7;margin:30px 0 0;max-width:440px;
+}
+.lb-features{
+  list-style:none;padding:0;margin:26px 0 0;
+  display:flex;flex-direction:column;gap:13px;
+}
+.lb-features li{
+  display:flex;align-items:center;gap:12px;
+  font-size:13px;color:rgba(255,255,255,.88);
+}
+.lb-features li i{
+  width:22px;height:22px;border-radius:50%;
+  background:rgba(52,211,153,.22);color:#6ee7b7;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;flex-shrink:0;
+}
+.lb-foot{
+  margin-top:auto;
+  font-size:11px;color:rgba(255,255,255,.38);
+  letter-spacing:.04em;padding-top:48px;
+}
+
+/* --- Right form panel --- */
+.login-form{
+  background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  padding:44px 36px;
+}
+.lf-inner{width:100%;max-width:380px;animation:lfIn 500ms cubic-bezier(.2,.9,.3,1) 100ms both}
+@keyframes lfIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+.lf-greet{
+  font-size:11px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--brand);
+  margin-bottom:10px;
+}
+.lf-title{
+  font-size:26px;font-weight:800;color:var(--ink);
+  letter-spacing:-.025em;margin:0 0 6px;line-height:1.15;
+}
+.lf-sub{
+  font-size:13.5px;color:var(--muted);
+  margin:0 0 30px;line-height:1.5;
+}
+.lf-field{margin-bottom:16px}
+.lf-label{
+  display:block;font-size:12px;font-weight:600;
+  color:var(--ink-2);margin-bottom:7px;letter-spacing:.01em;
+}
+.lf-input-wrap{position:relative;display:block}
+.lf-input-wrap > .lf-ico{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  color:var(--muted-2);font-size:13px;pointer-events:none;
+  transition:color var(--tr);
+}
+.lf-input-wrap:focus-within > .lf-ico{color:var(--brand)}
+.lf-input{
+  width:100%;
+  padding:13px 44px 13px 42px;
+  border:1px solid var(--line-strong);
+  border-radius:var(--r);
+  font-size:13.5px;
+  background:#fff;color:var(--ink);
+  font-family:var(--font);
+  transition:border-color var(--tr),box-shadow var(--tr);
+  outline:none;
+}
+.lf-input:focus{
+  border-color:var(--brand);
+  box-shadow:0 0 0 3px rgba(4,120,87,.12);
+}
+.lf-input::placeholder{color:var(--muted-2)}
+.lf-toggle{
+  position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  width:34px;height:34px;
+  border:0;background:transparent;
+  color:var(--muted-2);cursor:pointer;
+  border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;
+  transition:background var(--tr),color var(--tr);
+}
+.lf-toggle:hover{background:var(--canvas);color:var(--ink-2)}
+.lf-submit{
+  width:100%;margin-top:10px;
+  padding:13px;
+  background:var(--brand);color:#fff;
+  border:0;border-radius:var(--r);
+  font-family:var(--font);font-weight:700;font-size:13.5px;
+  cursor:pointer;
+  transition:background var(--tr),transform var(--tr);
+  display:flex;align-items:center;justify-content:center;gap:9px;
+}
+.lf-submit:hover:not(:disabled){background:var(--brand-dark)}
+.lf-submit:active:not(:disabled){transform:scale(.995)}
+.lf-submit:disabled{opacity:.7;cursor:not-allowed}
+.lf-foot{
+  font-size:11.5px;color:var(--muted-2);
+  text-align:center;margin:34px 0 0;
+  letter-spacing:.02em;
+}
+
+@media(max-width:900px){
+  .login-shell{grid-template-columns:1fr}
+  .login-brand{padding:32px 24px 28px;min-height:auto}
+  .lb-logo{width:52px;height:52px;border-radius:10px}
+  .lb-logo img{max-height:34px;max-width:34px}
+  .lb-title{font-size:24px;margin-top:18px}
+  .lb-sub{font-size:11px}
+  .lb-desc,.lb-features{display:none}
+  .lb-foot{padding-top:20px;font-size:10.5px;margin-top:20px}
+  .login-form{padding:30px 22px}
+  .lf-title{font-size:22px}
+}
+
+/* ============ TOPBAR ============ */
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--topbar-h);z-index:1100;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 18px}
+.topbar .tb-toggle{background:transparent;border:0;width:36px;height:36px;border-radius:var(--r-sm);color:var(--ink-2);font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background var(--tr)}
+.topbar .tb-toggle:hover{background:var(--canvas);color:var(--brand)}
+.topbar .tb-brand{display:flex;align-items:center;gap:10px;padding-right:14px;border-right:1px solid var(--line);height:32px}
+.topbar .tb-brand img{height:32px;width:auto;object-fit:contain}
+.topbar .tb-brand-txt{line-height:1.1}
+.topbar .tb-brand-txt .t{font-weight:800;font-size:14px;color:var(--brand-deep);letter-spacing:-.01em}
+.topbar .tb-brand-txt .s{font-size:9.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.topbar .tb-page{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12.5px;font-weight:500}
+.topbar .tb-page i{font-size:10px;color:var(--muted-2)}
+.topbar .tb-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.topbar .tb-icon{width:38px;height:38px;border-radius:var(--r-sm);background:transparent;border:0;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:background var(--tr),color var(--tr)}
+.topbar .tb-icon:hover{background:var(--canvas);color:var(--brand)}
+.topbar .tb-icon.spin i{animation:rot .6s linear}
+.topbar .tb-user{display:flex;align-items:center;gap:10px;padding:5px 10px 5px 5px;border-radius:var(--r);cursor:pointer;transition:background var(--tr);border:1px solid transparent}
+.topbar .tb-user:hover{background:var(--canvas);border-color:var(--line)}
+.topbar .tb-user .av{width:32px;height:32px;border-radius:var(--r-sm);background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.topbar .tb-user .meta{line-height:1.15}
+.topbar .tb-user .meta .nm{font-weight:600;font-size:12.5px;color:var(--ink);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .tb-user .meta .rl{font-size:10.5px;color:var(--muted)}
+.topbar .tb-user .caret{font-size:9px;color:var(--muted-2);margin-left:2px}
+.topbar .tb-hamb{display:none}
+
+.dropdown-menu{border-radius:var(--r);border:1px solid var(--line-strong);box-shadow:var(--shadow);padding:5px;min-width:220px;margin-top:6px!important}
+.dropdown-menu .dropdown-header{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:6px 12px 4px;font-weight:700}
+.dropdown-menu .dropdown-item{border-radius:var(--r-sm);font-size:13px;padding:8px 12px;color:var(--ink-2);display:flex;align-items:center;gap:10px}
+.dropdown-menu .dropdown-item i{width:16px;text-align:center;color:var(--muted);font-size:12.5px}
+.dropdown-menu .dropdown-item:hover{background:var(--canvas);color:var(--brand)}
+.dropdown-menu .dropdown-item:hover i{color:var(--brand)}
+.dropdown-menu .dropdown-item.text-danger,.dropdown-menu .dropdown-item.text-danger i{color:var(--danger)!important}
+.dropdown-menu .dropdown-item.text-danger:hover{background:var(--danger-soft);color:var(--danger)!important}
+
+/* ============ SIDEBAR ============ */
+.sb{position:fixed;top:var(--topbar-h);left:0;bottom:0;width:var(--sidebar-w);background:#fff;border-right:1px solid var(--line);z-index:900;display:flex;flex-direction:column;transition:transform var(--tr)}
+.sb .nav-cap{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);padding:16px 20px 8px}
+.sb .nav-scroll{flex:1;overflow-y:auto;padding:0 10px 16px}
+.sb .nv{display:flex;align-items:center;gap:12px;padding:10px 12px;margin:1px 0;color:var(--ink-2);text-decoration:none;cursor:pointer;font-weight:500;font-size:13px;border-radius:var(--r-sm);transition:background var(--tr),color var(--tr);position:relative}
+.sb .nv i{width:18px;text-align:center;font-size:14px;color:var(--muted);transition:color var(--tr)}
+.sb .nv:hover{background:var(--canvas);color:var(--ink)}
+.sb .nv:hover i{color:var(--brand)}
+.sb .nv.active{background:var(--brand-soft);color:var(--brand-deep);font-weight:600}
+.sb .nv.active i{color:var(--brand)}
+.sb .nv.active::before{content:'';position:absolute;left:-10px;top:8px;bottom:8px;width:3px;background:var(--brand);border-radius:0 3px 3px 0}
+.sb .sb-foot{padding:12px 16px;border-top:1px solid var(--line);font-size:10.5px;color:var(--muted-2)}
+.sb .sb-foot .v{font-weight:600;color:var(--muted)}
+body.sb-collapsed .sb{transform:translateX(-100%)}
+body.sb-collapsed .main{margin-left:0}
+#sbBackdrop{position:fixed;top:var(--topbar-h);left:0;right:0;bottom:0;background:rgba(15,23,42,.5);z-index:899;opacity:0;visibility:hidden;transition:var(--tr)}
+#sbBackdrop.show{opacity:1;visibility:visible}
+
+/* ============ MAIN ============ */
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:22px 24px 40px;min-height:calc(100vh - var(--topbar-h));transition:margin var(--tr)}
+.pg{animation:pgIn 200ms ease}
+@keyframes pgIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.pg.d-none{display:none!important}
+
+/* ============ DASHBOARD ============ */
+.dash-welcome{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.dash-welcome h2{font-weight:700;font-size:18px;color:var(--ink);margin:0 0 3px;letter-spacing:-.01em}
+.dash-welcome p{margin:0;font-size:12.5px;color:var(--muted)}
+.dash-welcome .dash-date{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted-2);margin-top:6px}
+.dash-welcome .dash-date i{color:var(--brand)}
+.dash-welcome .dash-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.stat{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px;position:relative;transition:border-color var(--tr);--accent:var(--brand)}
+.stat:hover{border-color:var(--line-strong)}
+.stat .stat-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}
+.stat .lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stat .ico{font-size:15px;color:var(--accent);opacity:.5;transition:opacity var(--tr);line-height:1}
+.stat:hover .ico{opacity:.85}
+.stat .num{font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.stat .num.loading-num{color:var(--muted-2);font-size:26px}
+.stat .sub{font-size:11.5px;color:var(--muted-2);margin-top:8px}
+.stat.tone-brand{--accent:var(--brand)}
+.stat.tone-info{--accent:var(--info)}
+.stat.tone-danger{--accent:var(--danger)}
+.stat.tone-success{--accent:var(--brand)}
+
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line)}
+.panel-head h5{font-size:13px;font-weight:700;color:var(--ink);margin:0;display:flex;align-items:center;gap:8px}
+.panel-head h5 i{color:var(--brand);font-size:12.5px}
+.panel-head .link{font-size:11.5px;color:var(--brand);font-weight:600;cursor:pointer;text-decoration:none}
+.panel-head .link:hover{color:var(--brand-dark)}
+.panel-body{padding:0}
+
+.recent-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.recent-table th{text-align:left;font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:10px 18px;background:#fafbfc;border-bottom:1px solid var(--line)}
+.recent-table td{padding:11px 18px;border-bottom:1px solid var(--line);color:var(--ink-2)}
+.recent-table tr:last-child td{border-bottom:0}
+.recent-table tr:hover td{background:var(--brand-soft)}
+.recent-table td strong{color:var(--ink);font-weight:600}
+
+.doc-summary{list-style:none;margin:0;padding:6px 0}
+.doc-summary li{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--line)}
+.doc-summary li:last-child{border-bottom:0}
+.doc-summary .lbl{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ink-2)}
+.doc-summary .lbl .dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.doc-summary .dot.g{background:var(--brand)}
+.doc-summary .dot.b{background:var(--info)}
+.doc-summary .dot.r{background:var(--danger)}
+.doc-summary .v{font-weight:700;font-size:15px;color:var(--ink)}
+
+.progress{height:5px;background:var(--line);border-radius:3px;overflow:hidden}
+.progress .bar{height:100%;background:var(--brand);border-radius:3px;transition:width .4s ease}
+.progress-row{padding:10px 18px 16px}
+.progress-row .p-label{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-bottom:6px;font-weight:500}
+.progress-row .p-label strong{color:var(--ink)}
+
+/* ============ SECTION HEAD ============ */
+.sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:18px}
+.sec-head h4{font-weight:700;font-size:19px;letter-spacing:-.01em;color:var(--ink);margin:0}
+.sec-head .sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+.sec-actions{display:flex;flex-wrap:wrap;gap:6px}
+.cc{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:20px}
+.cc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.cc-head-l h5{font-weight:700;font-size:15px;color:var(--brand-deep);margin:0}
+.cc-head-l p{font-size:11.5px;color:var(--muted);margin:2px 0 0}
+
+/* ============ SKELETON ============ */
+.skel{height:12px;border-radius:4px;background:linear-gradient(90deg,#eef2f6 0%,#e2e8f0 50%,#eef2f6 100%);background-size:200% 100%;animation:shim 1.4s ease-in-out infinite}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+tbody.skel-body tr td{padding:15px 14px;vertical-align:middle}
+tbody.skel-body tr:hover{background:transparent!important}
+tbody.skel-body tr td .skel{margin:0 auto}
+tbody.skel-body tr td:nth-child(1) .skel{margin-left:0}
+tbody.skel-body tr td:last-child .skel{margin-right:0}
+.recent-table tbody.skel-body tr td{padding:13px 18px}
+.recent-table tbody.skel-body tr td .skel{margin-left:0}
+
+/* ============ BUTTONS ============ */
+.btn{font-weight:600;border-radius:var(--r-sm);transition:background var(--tr),border-color var(--tr),color var(--tr);font-size:12.5px;padding:.45rem .85rem;border-width:1px}
+.btn:focus,.btn:focus-visible{box-shadow:0 0 0 3px rgba(4,120,87,.18);outline:none}
+.btn-success{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn-success:hover:not(:disabled){background:var(--brand-dark);border-color:var(--brand-dark);color:#fff}
+.btn-outline-success{border-color:var(--brand);color:var(--brand);background:#fff}
+.btn-outline-success:hover{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn-outline-primary{border-color:var(--line-strong);color:var(--ink-2);background:#fff}
+.btn-outline-primary:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn-outline-secondary{border-color:var(--line-strong);color:var(--muted);background:#fff}
+.btn-outline-secondary:hover{background:var(--ink-2);border-color:var(--ink-2);color:#fff}
+.btn-outline-warning{border-color:#fcd34d;color:var(--warning);background:#fff}
+.btn-outline-warning:hover{background:var(--warning);border-color:var(--warning);color:#fff}
+.btn-outline-danger{border-color:#fca5a5;color:var(--danger);background:#fff}
+.btn-outline-danger:hover{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn-warning{background:var(--warning);border-color:var(--warning);color:#fff}
+.btn-danger{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn .spin{display:inline-block;width:12px;height:12px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:rot .7s linear infinite;margin-right:6px;vertical-align:-2px}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* ============ TABLE ============ */
+.table-wrap{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.table{--bs-table-bg:transparent;margin-bottom:0;font-size:12.5px}
+.table thead th{background:#fafbfc;color:var(--ink-2);font-weight:600;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+.table tbody td{padding:11px 14px;border-color:var(--line);vertical-align:middle}
+.table tbody tr{transition:background var(--tr)}
+.table tbody tr:hover{background:var(--brand-soft)}
+.table .actions{display:flex;gap:3px;justify-content:center;flex-wrap:wrap}
+.table .actions .btn{padding:.28rem .5rem;font-size:11.5px;line-height:1}
+.table-responsive{overflow:auto}
+
+/* ============ BADGE ============ */
+.badge{font-weight:600;padding:.3em .55em;font-size:10.5px;border-radius:var(--r-sm);letter-spacing:.03em;text-transform:uppercase}
+.badge.bg-success{background:var(--brand)!important;color:#fff}
+.badge.bg-danger{background:var(--danger)!important;color:#fff}
+.badge.bg-warning{background:var(--warning)!important;color:#fff}
+.badge.bg-info{background:var(--info)!important;color:#fff}
+.badge.bg-light{background:#f1f5f9!important;color:var(--ink-2)!important;border:1px solid var(--line-strong)!important}
+
+/* ============ FORMS ============ */
+.form-control,.form-select{border:1px solid var(--line-strong);border-radius:var(--r-sm);font-size:13px;background:#fff;color:var(--ink);transition:border-color var(--tr),box-shadow var(--tr)}
+.form-control:focus,.form-select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(4,120,87,.1);background:#fff}
+.form-control-sm,.form-select-sm{font-size:12.5px;padding:.32rem .5rem}
+.form-control[readonly]{background:#f8fafc;color:var(--muted)}
+.form-label{font-size:11.5px;font-weight:600;color:var(--ink-2);margin-bottom:4px;letter-spacing:.01em}
+.form-label .req{color:var(--danger)}
+hr{opacity:.08}
+
+/* ============ EMPTY ============ */
+.empty{padding:46px 20px;text-align:center;color:var(--muted-2)}
+.empty i{font-size:34px;opacity:.35;margin-bottom:10px;display:block}
+.empty .t{font-weight:600;color:var(--ink-2);font-size:13px;margin-bottom:3px}
+.empty .s{font-size:12px}
+
+/* ============ SEARCH ============ */
+.search-wrap{position:relative;max-width:270px;width:100%}
+.search-wrap i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted-2);font-size:12px;pointer-events:none}
+.search-wrap input{padding-left:32px;font-size:12.5px;height:36px;border-radius:var(--r-sm)}
+
+/* ============ MODAL BASE ============ */
+.modal-backdrop.show{opacity:.55}
+/* Modal harus di atas topbar */
+.modal{z-index:2000!important}
+.modal-backdrop{z-index:1999!important}
+.dropdown-menu{z-index:2100!important}
+.modal-content{border:1px solid var(--line-strong);border-radius:var(--r-lg);box-shadow:0 24px 60px -20px rgba(0,0,0,.35);overflow:hidden}
+.modal-header{border:0;padding:16px 22px;border-bottom:1px solid var(--line)}
+.modal-header.bg-success{background:var(--brand-deep)!important}
+.modal-title{font-weight:700;letter-spacing:.01em;font-size:15px}
+.modal-body{padding:20px}
+.modal-footer{border-top:1px solid var(--line);padding:12px 22px}
+
+/* ============ MODAL SPEC VIEW (baru) ============ */
+#mSpec .modal-dialog{max-width:760px}
+#mSpec .modal-content{border:1px solid var(--line-strong);border-radius:var(--r-lg);overflow:hidden}
+#mSpec .modal-header{
+  padding:20px 24px;background:#fff;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:14px;
+}
+#mSpec .smh-icon{
+  width:42px;height:42px;border-radius:var(--r-sm);
+  background:var(--brand-soft);color:var(--brand);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+#mSpec .smh-text{line-height:1.2;flex:1;min-width:0}
+#mSpec .smh-title{font-size:15px;font-weight:700;color:var(--ink);margin:0;letter-spacing:-.01em}
+#mSpec .smh-sub{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ink-2);margin-top:5px;flex-wrap:wrap}
+#mSpec .smh-sub .prod-code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:11px;font-weight:600;color:var(--ink-2);
+  padding:2px 7px;border-radius:3px;background:#f1f5f9;border:1px solid var(--line);
+  letter-spacing:.02em;
+}
+#mSpec .modal-body{padding:0;max-height:calc(100vh - 210px);overflow-y:auto;background:#fafbfc}
+#mSpec .modal-footer{
+  padding:14px 24px;background:#fff;border-top:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+#mSpec .modal-footer .foot-info{
+  display:flex;align-items:center;gap:6px;
+  font-size:11.5px;color:var(--muted);
+}
+#mSpec .modal-footer .foot-info i{color:var(--brand);font-size:11px}
+
+/* Info grid */
+.spec-info-grid{
+  padding:20px 24px;background:#fff;border-bottom:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px 20px;
+}
+.spec-info-item{display:flex;flex-direction:column;gap:3px;min-width:0}
+.spec-info-item .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted-2)}
+.spec-info-item .val{font-size:13px;font-weight:600;color:var(--ink);word-wrap:break-word}
+
+/* View body */
+.spec-view-body{padding:20px 24px}
+.spec-view-title{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.spec-view-title .sv-t{
+  font-size:10.5px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);
+}
+.spec-view-title .sv-badge{
+  font-size:10.5px;font-weight:600;color:var(--ink-2);
+  padding:3px 10px;border-radius:20px;background:#f1f5f9;
+  border:1px solid var(--line);
+}
+
+.spec-view-item{
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:14px 16px;margin-bottom:8px;
+  transition:border-color var(--tr);
+}
+.spec-view-item:last-child{margin-bottom:0}
+.spec-view-item:hover{border-color:var(--line-strong)}
+.spec-view-item .sv-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:10px;
+}
+.spec-view-item .sv-num{
+  width:24px;height:24px;border-radius:50%;flex-shrink:0;
+  background:var(--brand-soft);color:var(--brand);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+}
+.spec-view-item .sv-name{
+  font-weight:700;font-size:13.5px;color:var(--ink);flex:1;min-width:0;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.spec-view-item .sv-type{
+  font-size:9.5px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);
+  padding:2px 8px;border-radius:3px;
+  background:#f1f5f9;border:1px solid var(--line);
+}
+.spec-view-item .sv-body{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;
+  padding-left:34px;
+}
+.spec-view-item .sv-cell{display:flex;flex-direction:column;gap:2px;min-width:0}
+.spec-view-item .sv-lbl{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2)}
+.spec-view-item .sv-val{font-size:12.5px;font-weight:600;color:var(--ink-2);word-wrap:break-word}
+.spec-view-item .sv-val.spec-range{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:12.5px;color:var(--brand-deep);font-weight:700;
+}
+.spec-view-item .sv-val.muted{color:var(--muted);font-weight:400}
+
+.spec-empty-view{
+  padding:44px 20px;text-align:center;color:var(--muted-2);
+  background:#fff;border:1px dashed var(--line-strong);border-radius:var(--r-sm);
+}
+.spec-empty-view i{font-size:30px;opacity:.35;margin-bottom:10px;display:block}
+.spec-empty-view .t{font-weight:600;color:var(--ink-2);font-size:13px;margin-bottom:3px}
+.spec-empty-view .s{font-size:12px}
+
+/* ============ MASTER PRODUK — Inline Form ============ */
+.form-section{padding:0 0 22px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.form-section:last-of-type{border-bottom:0;margin-bottom:0}
+.form-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.form-section-head .sh-l{display:flex;align-items:center;gap:10px}
+.form-section-head .sh-num{width:22px;height:22px;border-radius:50%;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.form-section-head h6{font-weight:700;font-size:13px;color:var(--ink);margin:0}
+.form-section-head .sh-help{font-size:11.5px;color:var(--muted);margin-top:2px}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+
+.spec-list{display:flex;flex-direction:column;gap:8px}
+.spec-row{display:grid;grid-template-columns:28px minmax(140px,2fr) 130px 80px 80px 90px minmax(120px,1.5fr) 32px;gap:8px;align-items:center;padding:10px;background:#fafbfc;border:1px solid var(--line);border-radius:var(--r-sm);transition:border-color var(--tr),background var(--tr);animation:specIn 240ms ease}
+@keyframes specIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@keyframes specOut{to{opacity:0;transform:translateX(-12px);height:0;padding:0;margin:0;border-width:0}}
+.spec-row:hover{background:#fff;border-color:var(--line-strong)}
+.spec-row.focused{background:#fff;border-color:var(--brand);box-shadow:0 0 0 3px rgba(4,120,87,.08)}
+.spec-num{width:24px;height:24px;border-radius:50%;background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:var(--muted);flex-shrink:0}
+.spec-row.focused .spec-num{background:var(--brand);border-color:var(--brand);color:#fff}
+.spec-input{width:100%;border:1px solid var(--line-strong);border-radius:5px;font-size:12.5px;padding:.4rem .55rem;background:#fff;transition:border-color var(--tr),box-shadow var(--tr);font-family:var(--font)}
+.spec-input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(4,120,87,.1);outline:none}
+.spec-input::placeholder{color:#b0b8c4}
+.spec-del{width:28px;height:28px;border:0;background:transparent;color:var(--muted-2);border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all var(--tr)}
+.spec-del:hover{background:var(--danger-soft);color:var(--danger)}
+.spec-labels{display:grid;grid-template-columns:28px minmax(140px,2fr) 130px 80px 80px 90px minmax(120px,1.5fr) 32px;gap:8px;padding:0 10px 6px}
+.spec-labels span{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-2)}
+.spec-empty{padding:24px;text-align:center;background:#fafbfc;border:1px dashed var(--line-strong);border-radius:var(--r-sm);color:var(--muted);font-size:12.5px}
+.spec-empty i{display:block;font-size:22px;opacity:.3;margin-bottom:6px}
+.cnt-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;background:#f1f5f9;color:var(--ink-2);font-size:11px;font-weight:600}
+.cnt-badge i{font-size:10px;color:var(--muted)}
+
+/* Master table cells */
+.prod-cell{display:flex;align-items:center;gap:12px}
+.prod-code{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;background:#f1f5f9;color:var(--ink-2);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;font-weight:600;letter-spacing:.02em;border:1px solid var(--line);white-space:nowrap}
+.prod-info{min-width:0}
+.prod-name{font-weight:600;color:var(--ink);line-height:1.25;font-size:13px}
+.prod-sub{font-size:11px;color:var(--muted-2);margin-top:1px}
+.halal-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--ink-2);padding:3px 9px;border-radius:20px;background:#f8fafc;border:1px solid var(--line)}
+.halal-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--brand)}
+.halal-pill.non{color:var(--warning)}
+.halal-pill.non::before{background:var(--warning)}
+.pack-txt{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2)}
+.pack-txt i{color:var(--muted-2);font-size:11px}
+.act-group{display:inline-flex;gap:2px;background:#f8fafc;border:1px solid var(--line);border-radius:6px;padding:2px}
+.act-btn{width:30px;height:28px;border:0;background:transparent;color:var(--muted);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all var(--tr);position:relative}
+.act-btn:hover{background:#fff;color:var(--ink)}
+.act-btn.edit:hover{color:var(--warning)}
+.act-btn.view:hover{color:var(--info)}
+.act-btn.print:hover{color:var(--brand)}
+.act-btn.del:hover{color:var(--danger)}
+.act-btn + .act-btn::before{content:'';position:absolute;left:-1px;top:6px;bottom:6px;width:1px;background:var(--line)}
+
+/* ============ TOAST ============ */
+#toastBox{position:fixed;top:calc(var(--topbar-h) + 14px);right:18px;z-index:10000;display:flex;flex-direction:column;gap:8px;max-width:370px;width:calc(100% - 36px);pointer-events:none}
+.toast-i{background:#fff;border:1px solid var(--line-strong);border-left:3px solid var(--info);border-radius:var(--r);padding:12px 14px;display:flex;gap:10px;align-items:flex-start;pointer-events:auto;box-shadow:var(--shadow);animation:toastIn 200ms ease}
+.toast-i.out{animation:toastOut 160ms ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(24px)}}
+.toast-i .t-ico{width:24px;height:24px;border-radius:var(--r-sm);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff}
+.toast-i.ok{border-left-color:var(--brand)}
+.toast-i.ok .t-ico{background:var(--brand)}
+.toast-i.err{border-left-color:var(--danger)}
+.toast-i.err .t-ico{background:var(--danger)}
+.toast-i.warn{border-left-color:var(--warning)}
+.toast-i.warn .t-ico{background:var(--warning)}
+.toast-i.info{border-left-color:var(--info)}
+.toast-i.info .t-ico{background:var(--info)}
+.toast-i .t-body{flex:1;min-width:0}
+.toast-i .t-title{font-weight:700;font-size:12.5px;color:var(--ink)}
+.toast-i .t-msg{font-size:12px;color:var(--muted);margin-top:1px;word-wrap:break-word}
+.toast-i .t-close{background:transparent;border:0;color:var(--muted-2);cursor:pointer;font-size:13px;padding:2px;line-height:1}
+.toast-i .t-close:hover{color:var(--ink)}
+
+/* ============ OVERLAY ============ */
+#overlay{position:fixed;inset:0;background:rgba(15,23,42,.42);z-index:9998;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity 160ms ease,visibility 160ms ease}
+#overlay.show{opacity:1;visibility:visible}
+.loader-card{background:#fff;border-radius:var(--r-lg);padding:24px 30px;text-align:center;min-width:210px;box-shadow:var(--shadow)}
+.spinner-lg{width:38px;height:38px;margin:0 auto 12px;border:3px solid var(--brand-line);border-top-color:var(--brand);border-radius:50%;animation:rot .75s linear infinite}
+.loader-card .lt{font-weight:600;color:var(--ink-2);font-size:12.5px}
+
+/* ============ CONFIRM ============ */
+.confirm-icon{width:56px;height:56px;margin:0 auto 14px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:22px}
+.confirm-icon.danger{background:var(--danger-soft);color:var(--danger)}
+.confirm-icon.warn{background:var(--warning-soft);color:var(--warning)}
+
+/* ============ PRINT ROOT ============ */
+#printRoot{display:none!important}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:1100px){.topbar .tb-page{display:none}}
+@media(max-width:991px){
+  :root{--sidebar-w:0px}
+  .sb{width:238px;transform:translateX(-100%);box-shadow:4px 0 20px -8px rgba(0,0,0,.2)}
+  .sb.open{transform:translateX(0)}
+  body.sb-collapsed .sb{transform:translateX(-100%)}
+  .main{margin-left:0!important;padding:16px}
+  .topbar .tb-hamb{display:flex}
+  .topbar .tb-brand{padding-right:0;border-right:0}
+  .topbar .tb-brand-txt .s{display:none}
+  .topbar .tb-user .meta{display:none}
+  .topbar .tb-user{padding:4px}
+  #toastBox{top:calc(var(--topbar-h) + 10px);right:10px;left:10px;width:auto;max-width:none}
+}
+@media(max-width:768px){
+  .spec-info-grid{grid-template-columns:repeat(2,1fr);padding:16px}
+  .spec-view-body{padding:16px}
+  .spec-view-item .sv-body{grid-template-columns:1fr;padding-left:0}
+  .spec-row{grid-template-columns:24px 1fr 28px;grid-template-areas:"num param del" ". tipe ." ". min ." ". max ." ". sat ." ". ket .";padding:12px;gap:6px}
+  .spec-row .spec-num{grid-area:num}
+  .spec-row .f-p{grid-area:param}
+  .spec-row .f-t{grid-area:tipe}
+  .spec-row .f-mn{grid-area:min}
+  .spec-row .f-mx{grid-area:max}
+  .spec-row .f-u{grid-area:sat}
+  .spec-row .f-k{grid-area:ket}
+  .spec-row .spec-del{grid-area:del}
+  .spec-labels{display:none}
+  #mSpec .modal-dialog{max-width:100%;margin:0}
+  #mSpec .modal-content{border-radius:0;min-height:100vh}
+  #mSpec .modal-body{max-height:none}
+  #mSpec .modal-header,#mSpec .modal-footer{padding:14px 16px}
+}
+@media(max-width:575px){
+  .sec-actions .btn{flex:1;justify-content:center}
+  .modal-body{padding:15px}
+  .dash-welcome{padding:16px}
+  .dash-welcome h2{font-size:16px}
+  .stat .num{font-size:26px}
+}
+
+/* ============ MODAL PRODUK (Form Add/Edit) ============ */
+#mProd .modal-dialog{max-width:920px}
+#mProd .modal-content{border:1px solid var(--line-strong);border-radius:var(--r-lg);overflow:hidden}
+#mProd .modal-header{
+  padding:18px 24px;background:#fff;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:14px;
+}
+#mProd .mh-icon{
+  width:42px;height:42px;border-radius:var(--r-sm);flex-shrink:0;
+  background:var(--brand-soft);color:var(--brand);
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+#mProd .mh-text{line-height:1.2;flex:1;min-width:0}
+#mProd .modal-title{font-size:15px;font-weight:700;color:var(--ink);margin:0}
+#mProd .mh-sub{font-size:11.5px;color:var(--muted);margin-top:3px}
+#mProd .modal-body{padding:0;max-height:calc(100vh - 210px);overflow-y:auto;background:#fafbfc}
+#mProd .modal-footer{
+  padding:14px 24px;background:#fff;border-top:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+#mProd .modal-footer .mfoot-info{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+#mProd .modal-footer .mfoot-info i{color:var(--brand);font-size:11px}
+#mProd .form-section{padding:20px 24px;border-bottom:1px solid var(--line);background:#fff}
+#mProd .form-section:last-child{border-bottom:0}
+#mProd .form-actions{display:none}
+
+@media(max-width:768px){
+  #mProd .modal-dialog{max-width:100%;margin:0}
+  #mProd .modal-content{border-radius:0;min-height:100vh}
+  #mProd .modal-body{max-height:none}
+  #mProd .form-section{padding:16px}
+  #mProd .modal-header,#mProd .modal-footer{padding:14px 16px}
+  #mProd .modal-footer{flex-direction:column-reverse;align-items:stretch}
+  #mProd .modal-footer .mfoot-info{justify-content:center;order:2}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-shell">
+    <aside class="login-brand">
+      <div class="lb-logo">
+        <img src="https://lh3.googleusercontent.com/d/1cTPhZUSGNhnud4LJyyuaA8Hc_ulDem-6" alt="INBIONUSA" onerror="this.style.display='none'">
+      </div>
+      <h1 class="lb-title">INBIONUSA</h1>
+      <p class="lb-sub">a <strong>ZEKINDO</strong> Company</p>
+      <p class="lb-desc">Sistem manajemen mutu terpadu untuk Quality Control — mulai dari master produk, inspeksi, penerbitan COA, hingga arsip dokumen mutu.</p>
+      <ul class="lb-features">
+        <li><i class="fa-solid fa-check"></i>Master produk &amp; spesifikasi mutu</li>
+        <li><i class="fa-solid fa-check"></i>Inspeksi &amp; hasil uji laboratorium</li>
+        <li><i class="fa-solid fa-check"></i>Penerbitan Certificate of Analysis</li>
+        <li><i class="fa-solid fa-check"></i>Arsip dokumen mutu &amp; sertifikat</li>
+      </ul>
+      <div class="lb-foot">PT Inovasi Biokem Nusantara · Quality Control System v4.5</div>
+    </aside>
+    <main class="login-form">
+      <div class="lf-inner">
+        <div class="lf-greet">Quality Control System</div>
+        <h2 class="lf-title">Selamat datang kembali</h2>
+        <p class="lf-sub">Masuk untuk melanjutkan ke dashboard QC</p>
+
+        <div id="lErr" class="alert alert-danger d-none py-2 small"></div>
+
+        <form id="fLogin" autocomplete="off">
+          <div class="lf-field">
+            <label class="lf-label">Username</label>
+            <div class="lf-input-wrap">
+              <i class="fa-solid fa-user lf-ico"></i>
+              <input type="text" id="lUser" class="lf-input" placeholder="Masukkan username" required autocomplete="username">
+            </div>
+          </div>
+          <div class="lf-field">
+            <label class="lf-label">Password</label>
+            <div class="lf-input-wrap">
+              <i class="fa-solid fa-lock lf-ico"></i>
+              <input type="password" id="lPass" class="lf-input" placeholder="Masukkan password" required autocomplete="current-password">
+              <button type="button" class="lf-toggle" id="togglePass" aria-label="Tampilkan password">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <button type="submit" id="bLogin" class="lf-submit">
+            <i class="fa-solid fa-right-to-bracket"></i><span>Masuk ke Sistem</span>
+          </button>
+        </form>
+
+        <p class="lf-foot">© <span id="logYear"></span> PT Inovasi Biokem Nusantara</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="sbBackdrop"></div>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <button class="tb-toggle tb-hamb" id="btnHamb" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+  <button class="tb-toggle d-none d-lg-flex" id="btnCollapse" aria-label="Toggle sidebar"><i class="fa-solid fa-bars"></i></button>
+  <div class="tb-brand">
+    <img src="https://lh3.googleusercontent.com/d/1cTPhZUSGNhnud4LJyyuaA8Hc_ulDem-6" alt="" onerror="this.style.display='none'">
+    <div class="tb-brand-txt">
+      <div class="t">INBIONUSA</div>
+      <div class="s">Quality Control</div>
+    </div>
+  </div>
+  <div class="tb-page" id="tbPage">
+    <i class="fa-solid fa-chevron-right"></i><span id="tbPageName">Dashboard</span>
+  </div>
+  <div class="tb-right">
+    <button class="tb-icon" id="btnRefresh" title="Refresh"><i class="fa-solid fa-rotate"></i></button>
+    <div class="dropdown">
+      <div class="tb-user" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="av" id="uAv">–</div>
+        <div class="meta">
+          <div class="nm" id="uName">–</div>
+          <div class="rl" id="uRole">–</div>
+        </div>
+        <i class="fa-solid fa-chevron-down caret"></i>
+      </div>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li class="dropdown-header">Akun</li>
+        <li><a class="dropdown-item" data-a="pw"><i class="fa-solid fa-key"></i>Ganti Password</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" data-a="logout"><i class="fa-solid fa-power-off"></i>Keluar</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sb" id="sb">
+  <div class="nav-cap">Menu Utama</div>
+  <div class="nav-scroll">
+    <a class="nv active" data-p="dashboard"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+    <a class="nv" data-p="master"><i class="fa-solid fa-boxes-stacked"></i><span>Master Produk &amp; Spek</span></a>
+    <a class="nv" data-p="inspeksi"><i class="fa-solid fa-vial-circle-check"></i><span>Inspeksi &amp; Pengujian</span></a>
+    <a class="nv" data-p="coa"><i class="fa-solid fa-certificate"></i><span>Penerbitan COA</span></a>
+    <a class="nv" data-p="dokumen"><i class="fa-solid fa-folder-closed"></i><span>Arsip &amp; Dokumen</span></a>
+  </div>
+  <div class="sb-foot">
+    <div>Signed in as <span class="v" id="sbUser">–</span></div>
+    <div style="margin-top:2px">QC System <span class="v">v4.4</span></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <section id="p-dashboard" class="pg">
+    <div class="dash-welcome">
+      <div>
+        <h2>Selamat datang, <span id="dashName">–</span></h2>
+        <p>Ringkasan aktivitas Quality Control hari ini</p>
+        <div class="dash-date"><i class="fa-regular fa-calendar"></i><span id="dashDate">–</span></div>
+      </div>
+      <div class="dash-actions">
+        <button class="btn btn-outline-secondary btn-sm" data-a="goto" data-id="dokumen"><i class="fa-solid fa-folder-closed me-1"></i>Dokumen</button>
+        <button class="btn btn-success btn-sm" data-a="openUji"><i class="fa-solid fa-plus me-1"></i>Inspeksi Baru</button>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+      <div class="col-6 col-lg-3">
+        <div class="stat tone-brand">
+          <div class="stat-head">
+            <div class="lbl">Produk</div>
+            <div class="ico"><i class="fa-solid fa-boxes-stacked"></i></div>
+          </div>
+          <div class="num" id="dProd">–</div>
+          <div class="sub">Terdaftar di master</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat tone-info">
+          <div class="stat-head">
+            <div class="lbl">Lot Diuji</div>
+            <div class="ico"><i class="fa-solid fa-flask-vial"></i></div>
+          </div>
+          <div class="num" id="dLot">–</div>
+          <div class="sub">Lot unik, status terakhir</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat tone-success">
+          <div class="stat-head">
+            <div class="lbl">Lot Pass</div>
+            <div class="ico"><i class="fa-solid fa-circle-check"></i></div>
+          </div>
+          <div class="num" id="dPass">–</div>
+          <div class="sub">Lolos QC</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat tone-danger">
+          <div class="stat-head">
+            <div class="lbl">Lot Fail</div>
+            <div class="ico"><i class="fa-solid fa-circle-xmark"></i></div>
+          </div>
+          <div class="num" id="dFail">–</div>
+          <div class="sub">Tidak lolos QC</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-7">
+        <div class="panel" style="height:100%">
+          <div class="panel-head">
+            <h5><i class="fa-solid fa-clock-rotate-left"></i>Inspeksi Terbaru</h5>
+            <a class="link" data-a="goto" data-id="inspeksi">Lihat semua <i class="fa-solid fa-arrow-right ms-1"></i></a>
+          </div>
+          <div class="panel-body">
+            <div class="table-responsive">
+              <table class="recent-table">
+                <thead><tr><th>No Lot</th><th>Produk</th><th>Tanggal</th><th>Status</th></tr></thead>
+                <tbody id="tb-recent"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="panel" style="height:100%">
+          <div class="panel-head">
+            <h5><i class="fa-solid fa-file-shield"></i>Ringkasan Dokumen</h5>
+          </div>
+          <div class="panel-body">
+            <ul class="doc-summary">
+              <li><div class="lbl"><span class="dot b"></span>COA diterbitkan</div><div class="v" id="dCoa">–</div></li>
+              <li><div class="lbl"><span class="dot g"></span>Dokumen masih berlaku</div><div class="v" id="dDok">–</div></li>
+              <li><div class="lbl"><span class="dot r"></span>Dokumen kadaluarsa</div><div class="v" id="dExp" style="color:var(--danger)">–</div></li>
+            </ul>
+            <div class="progress-row">
+              <div class="p-label"><span>Tingkat kelulusan lot</span><strong id="passRate">–</strong></div>
+              <div class="progress"><div class="bar" id="passBar" style="width:0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MASTER PRODUK -->
+  <section id="p-master" class="pg d-none">
+    <div class="sec-head">
+      <div><h4>Master Produk &amp; Spesifikasi</h4><div class="sub">Kelola data produk dan parameter mutunya</div></div>
+      <div class="sec-actions">
+        <button class="btn btn-outline-secondary btn-sm" data-a="csv" data-id="tblProd" data-f="Master_Produk.csv"><i class="fa-solid fa-file-csv me-1"></i>CSV</button>
+        <button class="btn btn-outline-primary btn-sm" data-a="printTbl" data-id="tblProd" data-t="Rekap Master Produk"><i class="fa-solid fa-print me-1"></i>Cetak</button>
+        <button class="btn btn-success btn-sm" data-a="openProd"><i class="fa-solid fa-plus me-1"></i>Produk Baru</button>
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
+      <div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input class="form-control" placeholder="Cari produk..." data-search="tb-prod"></div>
+    </div>
+
+    <div class="table-wrap"><div class="table-responsive">
+      <table class="table" id="tblProd">
+        <thead>
+          <tr>
+            <th style="width:32%">Produk</th>
+            <th style="width:16%">Kategori</th>
+            <th style="width:12%">Satuan</th>
+            <th style="width:12%">Halal</th>
+            <th style="width:14%">Kemasan</th>
+            <th class="no-print text-center" style="width:14%">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tb-prod"></tbody>
+      </table>
+    </div></div>
+  </section>
+
+  <!-- INSPEKSI -->
+  <section id="p-inspeksi" class="pg d-none">
+    <div class="sec-head">
+      <div><h4>Inspeksi &amp; Hasil Uji</h4><div class="sub">Input dan kelola hasil pengujian lot produksi</div></div>
+      <div class="sec-actions">
+        <button class="btn btn-outline-secondary btn-sm" data-a="csv" data-id="tblUji" data-f="Hasil_Inspeksi_QC.csv"><i class="fa-solid fa-file-csv me-1"></i>CSV</button>
+        <button class="btn btn-outline-primary btn-sm" data-a="printTbl" data-id="tblUji" data-t="Rekap Hasil Inspeksi"><i class="fa-solid fa-print me-1"></i>Cetak</button>
+        <button class="btn btn-success btn-sm" data-a="openUji"><i class="fa-solid fa-plus me-1"></i>Input Hasil Uji</button>
+      </div>
+    </div>
+    <div id="cUji" class="cc d-none">
+      <h5 class="fw-bold mb-1" id="tUji" style="color:var(--brand-deep);font-size:15px"></h5>
+      <p class="small text-muted mb-3">Status PASS/FAIL dihitung otomatis dari hasil uji &amp; spesifikasi.</p>
+      <form id="fUji">
+        <div class="row g-2 mb-3">
+          <div class="col-md-3"><label class="form-label">Produk <span class="req">*</span></label><select id="uProd" class="form-select" required></select></div>
+          <div class="col-md-3">
+            <label class="form-label">No. Lot / Batch <span class="req">*</span> <span class="text-muted" style="font-size:10.5px">(otomatis)</span></label>
+            <input id="uLot" class="form-control" required placeholder="Pilih produk dulu">
+          </div>
+          <div class="col-md-2"><label class="form-label">Tgl Sampling <span class="req">*</span></label><input type="date" id="uTs" class="form-control" required></div>
+          <div class="col-md-2"><label class="form-label">Tgl Uji <span class="req">*</span></label><input type="date" id="uTu" class="form-control" required></div>
+          <div class="col-md-2"><label class="form-label">Inspector <span class="req">*</span></label><input id="uInsp" class="form-control" value="INBIONUSA QC Staff" required></div>
+        </div>
+        <div id="uBox" class="border p-3 mb-3 d-none" style="background:#f8fafc;border-color:var(--line)!important;border-radius:var(--r-sm)">
+          <div class="row pb-2 mb-2 fw-bold" style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-deep);border-bottom:1px solid var(--line)">
+            <div class="col-md-4">Parameter</div><div class="col-md-3">Spesifikasi</div><div class="col-md-3">Hasil Uji</div><div class="col-md-2">Status</div>
+          </div>
+          <div id="uParams"></div>
+        </div>
+        <div class="mb-3"><label class="form-label">Catatan</label><input id="uCat" class="form-control" placeholder="Opsional"></div>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="submit" id="bUji" class="btn btn-success fw-bold"><i class="fa-solid fa-check-double me-1"></i>Simpan Hasil Uji</button>
+          <button type="button" class="btn btn-outline-secondary" data-a="cancel">Batal</button>
+        </div>
+      </form>
+    </div>
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
+      <div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input class="form-control" placeholder="Cari lot / produk..." data-search="tb-uji"></div>
+    </div>
+    <div class="table-wrap"><div class="table-responsive">
+      <table class="table" id="tblUji">
+        <thead><tr><th>No Lot</th><th>Kode Produk</th><th>Tgl Sampling</th><th>Tgl Uji</th><th>Inspector</th><th>Status</th><th>Catatan</th><th class="no-print text-center">Aksi</th></tr></thead>
+        <tbody id="tb-uji"></tbody>
+      </table>
+    </div></div>
+  </section>
+
+  <!-- COA -->
+  <section id="p-coa" class="pg d-none">
+    <div class="sec-head">
+      <div><h4>Penerbitan Certificate of Analysis</h4><div class="sub">Terbitkan &amp; kelola COA untuk lot yang lolos QC</div></div>
+      <div class="sec-actions">
+        <button class="btn btn-outline-secondary btn-sm" data-a="csv" data-id="tblCOA" data-f="Daftar_COA.csv"><i class="fa-solid fa-file-csv me-1"></i>CSV</button>
+        <button class="btn btn-outline-primary btn-sm" data-a="printTbl" data-id="tblCOA" data-t="Rekap COA"><i class="fa-solid fa-print me-1"></i>Cetak</button>
+        <button class="btn btn-success btn-sm" data-a="openCOA"><i class="fa-solid fa-plus me-1"></i>Terbitkan COA</button>
+      </div>
+    </div>
+    <div id="cCOA" class="cc d-none">
+      <h5 class="fw-bold mb-1" id="tCOA" style="color:var(--brand-deep);font-size:15px"></h5>
+      <p class="small text-muted mb-3">Hasil uji pada COA disalin dari data inspeksi saat diterbitkan dan tidak berubah. Saat edit, hanya tanggal &amp; tanda tangan yang bisa diubah.</p>
+      <form id="fCOA">
+        <div class="row g-2 mb-3">
+          <div class="col-md-4"><label class="form-label">Lot berstatus PASS <span class="req">*</span></label><select id="cLot" class="form-select" required></select></div>
+          <div class="col-md-3"><label class="form-label">Kode Produk</label><input id="cKode" class="form-control" readonly></div>
+          <div class="col-md-5"><label class="form-label">Tgl Mfg <span class="req">*</span></label><input type="date" id="cMfg" class="form-control" required></div>
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col-md-3"><label class="form-label">Tgl Expired (auto +1 thn)</label><input type="date" id="cExp" class="form-control" required></div>
+          <div class="col-md-3"><label class="form-label">Tgl Rilis <span class="req">*</span></label><input type="date" id="cRilis" class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label">Tanda Tangan Digital <span class="req">*</span></label><input id="cTTD" class="form-control" value="Digital Signed by INBIONUSA Quality Assurance Dept." required></div>
+        </div>
+        <p class="small text-muted mb-3"><i class="fa-solid fa-circle-info me-1"></i>Tgl Expired otomatis +1 tahun dari Tgl Mfg. Tgl Rilis adalah tanggal COA diterbitkan.</p>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="submit" id="bCOA" class="btn btn-success fw-bold"><i class="fa-solid fa-file-signature me-1"></i>Simpan COA</button>
+          <button type="button" class="btn btn-outline-secondary" data-a="cancel">Batal</button>
+        </div>
+      </form>
+    </div>
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
+      <div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input class="form-control" placeholder="Cari no COA / lot..." data-search="tb-coa"></div>
+    </div>
+    <div class="table-wrap"><div class="table-responsive">
+      <table class="table" id="tblCOA">
+        <thead><tr><th>No. COA</th><th>Kode Produk</th><th>No Lot</th><th>Tgl Rilis</th><th>Tgl Expired</th><th class="no-print text-center">Aksi</th></tr></thead>
+        <tbody id="tb-coa"></tbody>
+      </table>
+    </div></div>
+  </section>
+
+  <!-- DOKUMEN -->
+  <section id="p-dokumen" class="pg d-none">
+    <div class="sec-head">
+      <div><h4>Arsip &amp; Dokumen Mutu</h4><div class="sub">Sertifikat, SOP, MSDS, dan dokumen mutu lain</div></div>
+      <div class="sec-actions">
+        <button class="btn btn-outline-secondary btn-sm" data-a="csv" data-id="tblDoc" data-f="Arsip_Dokumen_Mutu.csv"><i class="fa-solid fa-file-csv me-1"></i>CSV</button>
+        <button class="btn btn-outline-primary btn-sm" data-a="printTbl" data-id="tblDoc" data-t="Rekap Arsip Dokumen Mutu"><i class="fa-solid fa-print me-1"></i>Cetak</button>
+        <button class="btn btn-success btn-sm" data-a="openDoc"><i class="fa-solid fa-cloud-arrow-up me-1"></i>Upload Dokumen</button>
+      </div>
+    </div>
+    <div id="cDoc" class="cc d-none">
+      <h5 class="fw-bold mb-3" style="color:var(--brand-deep);font-size:15px">Upload Dokumen Baru</h5>
+      <form id="fDoc">
+        <div class="row g-2 mb-3">
+          <div class="col-md-4"><label class="form-label">Judul <span class="req">*</span></label><input id="dJudul" class="form-control" required></div>
+          <div class="col-md-3"><label class="form-label">Kategori</label>
+            <select id="dKat" class="form-select">
+              <option>Sertifikat Halal</option><option>SOP QC</option><option>MSDS</option>
+              <option>Kebijakan Mutu</option><option>Lain-lain</option>
+            </select>
+          </div>
+          <div class="col-md-2"><label class="form-label">Tgl Berlaku <span class="req">*</span></label><input type="date" id="dB" class="form-control" required></div>
+          <div class="col-md-3"><label class="form-label">Masa Kadaluarsa <span class="req">*</span></label><input type="date" id="dK" class="form-control" required></div>
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col-md-6"><label class="form-label">File PDF (maks. 8 MB)</label><input type="file" id="dFile" class="form-control" accept="application/pdf"></div>
+          <div class="col-md-6"><label class="form-label">Atau link Google Drive</label><input type="url" id="dLink" class="form-control" placeholder="https://drive.google.com/..."></div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="submit" id="bDoc" class="btn btn-success fw-bold"><i class="fa-solid fa-cloud-arrow-up me-1"></i>Simpan Arsip</button>
+          <button type="button" class="btn btn-outline-secondary" data-a="cancel">Batal</button>
+        </div>
+      </form>
+    </div>
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
+      <div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input class="form-control" placeholder="Cari dokumen..." data-search="tb-doc"></div>
+    </div>
+    <div class="table-wrap"><div class="table-responsive">
+      <table class="table" id="tblDoc">
+        <thead><tr><th>ID</th><th>Judul</th><th>Kategori</th><th>Tgl Berlaku</th><th>Masa Kadaluarsa</th><th>Status</th><th class="no-print text-center">Aksi</th></tr></thead>
+        <tbody id="tb-doc"></tbody>
+      </table>
+    </div></div>
+  </section>
+</main>
+
+<!-- ============ MODAL: FORM PRODUK (Add/Edit) ============ -->
+<div class="modal fade" id="mProd" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="mh-icon" id="mProdIcon"><i class="fa-solid fa-box"></i></div>
+        <div class="mh-text">
+          <h5 class="modal-title" id="mProdT">Produk Baru</h5>
+          <div class="mh-sub" id="mProdSub">Isi data produk dan parameter spesifikasi</div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="fProd">
+        <div class="modal-body">
+          <div class="form-section">
+            <div class="form-section-head">
+              <div class="sh-l">
+                <div class="sh-num">1</div>
+                <div>
+                  <h6>Informasi Produk</h6>
+                  <div class="sh-help">Data dasar identitas produk</div>
+                </div>
+              </div>
+            </div>
+            <div class="row g-2">
+              <div class="col-md-2"><label class="form-label">Kode <span class="req">*</span></label><input id="mKode" class="form-control" required placeholder="ID-01"></div>
+              <div class="col-md-3"><label class="form-label">Nama Produk <span class="req">*</span></label><input id="mNama" class="form-control" required></div>
+              <div class="col-md-2"><label class="form-label">Kategori <span class="req">*</span></label><input id="mKat" class="form-control" required></div>
+              <div class="col-md-2"><label class="form-label">Satuan <span class="req">*</span></label><input id="mSat" class="form-control" required></div>
+              <div class="col-md-1"><label class="form-label">Halal</label><select id="mHalal" class="form-select"><option>Halal</option><option>Non-Halal</option></select></div>
+              <div class="col-md-2"><label class="form-label">Kemasan <span class="req">*</span></label><input id="mKem" class="form-control" required></div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-head">
+              <div class="sh-l">
+                <div class="sh-num">2</div>
+                <div>
+                  <h6>Parameter Spesifikasi</h6>
+                  <div class="sh-help">Minimal 1 parameter. Tipe Teks untuk uji kualitatif.</div>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="cnt-badge" id="specCount"><i class="fa-solid fa-list-check"></i><span>0 parameter</span></span>
+                <button type="button" class="btn btn-outline-success btn-sm" data-a="addRow"><i class="fa-solid fa-plus me-1"></i>Parameter</button>
+              </div>
+            </div>
+            <div class="spec-labels" id="specLabels">
+              <span></span><span>Parameter</span><span>Tipe Batas</span><span>Min</span><span>Maks</span><span>Satuan</span><span>Keterangan</span><span></span>
+            </div>
+            <div id="params" class="spec-list"></div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <div class="mfoot-info">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Kolom bertanda <strong style="color:var(--danger)">*</strong> wajib diisi</span>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" id="bProd" class="btn btn-success"><i class="fa-solid fa-floppy-disk me-1"></i>Simpan Produk</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: LIHAT SPESIFIKASI (Redesigned) ============ -->
+<div class="modal fade" id="mSpec" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="smh-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+        <div class="smh-text">
+          <h5 class="smh-title" id="mSpecT">Spesifikasi Mutu Produk</h5>
+          <div class="smh-sub" id="mSpecSub"></div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="mSpecB"></div>
+      <div class="modal-footer">
+        <div class="foot-info"><i class="fa-solid fa-circle-info"></i><span>Data dari master spesifikasi QC</span></div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+          <button class="btn btn-success" data-a="printSpec"><i class="fa-solid fa-print me-1"></i>Cetak</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL KONFIRMASI -->
+<div class="modal fade" id="mConfirm" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content">
+  <div class="modal-body text-center pt-4 pb-3">
+    <div class="confirm-icon danger" id="cfIcon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <h6 class="fw-bold mb-2" id="cfTitle" style="font-size:14px">Konfirmasi</h6>
+    <p class="text-muted small mb-3" id="cfMsg"></p>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-outline-secondary w-100" data-bs-dismiss="modal">Batal</button>
+      <button type="button" class="btn btn-danger w-100" id="cfOk">Ya, Lanjutkan</button>
+    </div>
+  </div>
+</div></div></div>
+
+<div id="toastBox"></div>
+<div id="overlay"><div class="loader-card"><div class="spinner-lg"></div><div class="lt" id="ovText">Memuat data...</div></div></div>
+<div id="printRoot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* =========================================================
+   CONSTANTS & UTILS
+========================================================= */
+const LOGO = 'https://lh3.googleusercontent.com/d/1cTPhZUSGNhnud4LJyyuaA8Hc_ulDem-6';
+const $  = id => document.getElementById(id);
+const q  = (s, r) => (r || document).querySelector(s);
+const qa = (s, r) => Array.from((r || document).querySelectorAll(s));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fd = s => /^\d{4}-\d{2}-\d{2}/.test(s) ? String(s).slice(0, 10).split('-').reverse().join('-') : (s || '');
+const blank = v => v === '' || v == null;
+const badge = st => `<span class="badge ${st === 'FAIL' ? 'bg-danger' : 'bg-success'}">${esc(st)}</span>`;
+const todayStr = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+const COMPANY = {
+  nameEn: 'PT INOVASI BIOKEM NUSANTARA',
+  addr: 'Kawasan Bukit Indah, Jl. Bukit Akasia V Kav. A II No. 19, Dangdeur, Purwakarta, Jawa Barat 41181',
+  phone: '(+62) 822 2564 7544',
+  email: 'marketing@inbionusa.company',
+  web: 'inbionusa.com'
+};
+const PAGE_NAMES = {
+  dashboard: 'Dashboard', master: 'Master Produk',
+  inspeksi: 'Inspeksi & Pengujian', coa: 'Penerbitan COA', dokumen: 'Arsip & Dokumen'
+};
+const ID_MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const ID_DAYS = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+
+let T = null, E = {}, D = { prod: [], uji: [], coa: [], docs: [] };
+
+/* =========================================================
+   TOAST
+========================================================= */
+function toast(msg, type, title) {
+  type = type || 'info';
+  const icons = { ok: 'fa-check', err: 'fa-xmark', warn: 'fa-triangle-exclamation', info: 'fa-circle-info' };
+  const titles = { ok: 'Berhasil', err: 'Gagal', warn: 'Perhatian', info: 'Info' };
+  const el = document.createElement('div');
+  el.className = 'toast-i ' + type;
+  el.innerHTML = `<div class="t-ico"><i class="fa-solid ${icons[type] || icons.info}"></i></div>
+    <div class="t-body"><div class="t-title">${esc(title || titles[type])}</div><div class="t-msg">${esc(msg || '')}</div></div>
+    <button class="t-close"><i class="fa-solid fa-xmark"></i></button>`;
+  $('toastBox').appendChild(el);
+  const close = () => { el.classList.add('out'); setTimeout(() => el.remove(), 180); };
+  el.querySelector('.t-close').onclick = close;
+  setTimeout(close, type === 'err' ? 6500 : type === 'warn' ? 5000 : 3800);
+}
+
+/* =========================================================
+   CONFIRM
+========================================================= */
+let cfResolve = null;
+const mConfirm = () => bootstrap.Modal.getOrCreateInstance($('mConfirm'));
+function confirmDlg(msg, opts) {
+  opts = opts || {};
+  return new Promise(res => {
+    cfResolve = res;
+    $('cfTitle').textContent = opts.title || 'Konfirmasi';
+    $('cfMsg').textContent = msg;
+    const ic = $('cfIcon');
+    ic.className = 'confirm-icon ' + (opts.danger === false ? 'warn' : 'danger');
+    ic.innerHTML = `<i class="fa-solid ${opts.danger === false ? 'fa-circle-question' : 'fa-triangle-exclamation'}"></i>`;
+    $('cfOk').className = 'btn w-100 ' + (opts.danger === false ? 'btn-warning' : 'btn-danger');
+    $('cfOk').textContent = opts.okText || 'Ya, Lanjutkan';
+    mConfirm().show();
+  });
+}
+$('cfOk').onclick = () => { mConfirm().hide(); if (cfResolve) cfResolve(true); cfResolve = null; };
+$('mConfirm').addEventListener('hidden.bs.modal', () => { if (cfResolve) cfResolve(false); cfResolve = null; });
+
+/* =========================================================
+   SERVER CALL
+========================================================= */
+function call(fn, args, ok, btn, opts) {
+  opts = opts || {};
+  const orig = btn ? btn.innerHTML : null;
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span>' + (opts.btnText || 'Memproses...'); }
+  const done = () => { if (btn && orig !== null) { btn.disabled = false; btn.innerHTML = orig; } };
+  google.script.run
+    .withSuccessHandler(r => {
+      done();
+      if (!r) return toast('Server tidak merespons. Coba lagi.', 'err');
+      if (r.auth === false) { out(true); toast(r.msg, 'warn'); return; }
+      if (!r.ok) return toast(r.msg || 'Terjadi kesalahan', 'err');
+      if (ok) ok(r.data, r.msg);
+    })
+    .withFailureHandler(e => { done(); toast('Kesalahan sistem: ' + (e.message || e), 'err'); })
+    .api(T, fn, args || []);
+}
+
+/* =========================================================
+   LOGIN / LOGOUT
+========================================================= */
+$('fLogin').onsubmit = e => {
+  e.preventDefault();
+  const b = $('bLogin'), er = $('lErr');
+  er.classList.add('d-none');
+  b.disabled = true;
+  b.innerHTML = '<span class="spin"></span><span>Memverifikasi...</span>';
+  google.script.run
+    .withSuccessHandler(r => {
+      b.disabled = false;
+      b.innerHTML = '<i class="fa-solid fa-right-to-bracket me-2"></i><span>Masuk</span>';
+      if (r && r.ok) {
+        T = r.data.token;
+        const nm = r.data.nama || r.data.role || '–';
+        $('uName').textContent = nm;
+        $('uRole').textContent = r.data.role || '';
+        $('sbUser').textContent = nm;
+        $('uAv').textContent = String(nm).trim().charAt(0).toUpperCase();
+        $('dashName').textContent = nm.split(' ')[0];
+        $('fLogin').reset();
+        $('login').classList.add('hide');
+        toast('Selamat datang, ' + nm, 'ok');
+        go('dashboard');
+      } else {
+        er.textContent = (r && r.msg) || 'Login gagal';
+        er.classList.remove('d-none');
+      }
+    })
+    .withFailureHandler(x => {
+      b.disabled = false;
+      b.innerHTML = '<i class="fa-solid fa-right-to-bracket me-2"></i><span>Masuk</span>';
+      er.textContent = x.message;
+      er.classList.remove('d-none');
+    })
+    .api(null, 'login', [$('lUser').value, $('lPass').value]);
+};
+
+function out(silent) {
+  const doOut = () => {
+    if (T) google.script.run.api(T, 'logout', []);
+    T = null; D = { prod: [], uji: [], coa: [], docs: [] };
+    qa('tbody').forEach(t => t.innerHTML = '');
+    cleanupPrint();
+    resetForms();
+    $('login').classList.remove('hide');
+  };
+  if (silent) return doOut();
+  confirmDlg('Anda akan keluar dari sistem. Lanjutkan?', { title: 'Keluar', okText: 'Ya, Keluar', danger: false })
+    .then(ok => { if (ok) doOut(); });
+}
+
+/* =========================================================
+   NAVIGASI
+========================================================= */
+const LOAD = { dashboard: loadDash, master: loadProd, inspeksi: loadUji, coa: loadCOA, dokumen: loadDocs };
+function go(n) {
+  cleanupPrint();
+  qa('.pg').forEach(p => p.classList.add('d-none'));
+  const target = $('p-' + n);
+  if (!target) return;
+  target.classList.remove('d-none');
+  target.style.animation = 'none'; void target.offsetWidth; target.style.animation = '';
+  qa('.nv').forEach(a => a.classList.toggle('active', a.dataset.p === n));
+  $('tbPageName').textContent = PAGE_NAMES[n] || n;
+  resetForms();
+  closeSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  LOAD[n]();
+}
+function resetForms() {
+  resetProd(); resetUji(); resetCOA();
+  $('fDoc').reset(); $('cDoc').classList.add('d-none');
+}
+function openSidebar() { $('sb').classList.add('open'); $('sbBackdrop').classList.add('show'); }
+function closeSidebar() { $('sb').classList.remove('open'); $('sbBackdrop').classList.remove('show'); }
+$('btnHamb').onclick = openSidebar;
+$('sbBackdrop').onclick = closeSidebar;
+$('btnCollapse').onclick = () => document.body.classList.toggle('sb-collapsed');
+$('btnRefresh').onclick = () => {
+  const b = $('btnRefresh');
+  b.classList.add('spin');
+  setTimeout(() => b.classList.remove('spin'), 700);
+  const active = q('.nv.active');
+  if (active) { LOAD[active.dataset.p](); toast('Data diperbarui', 'ok'); }
+};
+
+/* =========================================================
+   FORMAT SPEC
+========================================================= */
+function fmtSpec(i) {
+  if (i.t === 'TEXT') return i.k || 'Sesuai Standar';
+  if (i.t === 'MIN') return blank(i.mn) ? '-' : '≥ ' + i.mn;
+  if (i.t === 'MAX') return blank(i.mx) ? '-' : '≤ ' + i.mx;
+  if (!blank(i.mn) && !blank(i.mx)) {
+    const a = parseFloat(String(i.mn).replace(',', '.')), b = parseFloat(String(i.mx).replace(',', '.'));
+    if (!isNaN(a) && !isNaN(b) && a > b) return i.mx + ' – ' + i.mn;
+    return i.mn + ' – ' + i.mx;
+  }
+  return !blank(i.mn) ? '≥ ' + i.mn : !blank(i.mx) ? '≤ ' + i.mx : '-';
+}
+
+/* =========================================================
+   PRINT
+========================================================= */
+let printCleanupTimer = null;
+function cleanupPrint() {
+  document.body.classList.remove('printing');
+  $('printRoot').innerHTML = '';
+  if (printCleanupTimer) { clearTimeout(printCleanupTimer); printCleanupTimer = null; }
+}
+function printHtml(h) {
+  cleanupPrint();
+  const originalTitle = document.title;
+  document.title = '';
+  $('printRoot').innerHTML = h;
+  document.body.classList.add('printing');
+  const onAfter = () => {
+    cleanupPrint();
+    document.title = originalTitle;
+    window.removeEventListener('afterprint', onAfter);
+  };
+  window.addEventListener('afterprint', onAfter);
+  printCleanupTimer = setTimeout(() => {
+    cleanupPrint();
+    document.title = originalTitle;
+  }, 30000);
+  window.print();
+  document.title = originalTitle;
+}
+window.addEventListener('afterprint', () => cleanupPrint());
+
+function docHeader() {
+  return `<div class="doc-head">
+    <div class="doc-brand">
+      <img src="${LOGO}" alt="" class="doc-logo" onerror="this.style.display='none'">
+      <div class="doc-brand-txt">
+        <h1>${COMPANY.nameEn}</h1>
+        <p>${COMPANY.addr}</p>
+        <p>${COMPANY.phone} &nbsp;·&nbsp; ${COMPANY.email} &nbsp;·&nbsp; ${COMPANY.web}</p>
+      </div>
+    </div>
+  </div>`;
+}
+function docTitle(main, sub) {
+  return `<div class="doc-title">
+    <h2>${esc(main)}</h2>
+    ${sub ? `<div class="doc-title-sub">${esc(sub)}</div>` : ''}
+    <div class="doc-rule"></div>
+  </div>`;
+}
+function docMeta(pairs) {
+  return `<table class="doc-meta"><tbody>${pairs.map(p => `<tr><th>${esc(p[0])}</th><td>${p[1]}</td></tr>`).join('')}</tbody></table>`;
+}
+function docItemsTable(items) {
+  return `<table class="doc-tbl">
+    <thead><tr>
+      <th style="width:6%">No</th><th style="width:34%">Parameter Uji</th><th style="width:24%">Spesifikasi</th>
+      <th style="width:22%">Hasil Uji</th><th style="width:14%">Status</th>
+    </tr></thead>
+    <tbody>
+    ${items.map((i, k) => `<tr>
+      <td class="c">${k + 1}</td>
+      <td><strong>${esc(i.p)}</strong>${i.k ? `<div class="doc-note">${esc(i.k)}</div>` : ''}</td>
+      <td>${esc(fmtSpec(i))}${i.u ? ' <span class="doc-unit">' + esc(i.u) + '</span>' : ''}</td>
+      <td class="c"><strong>${esc(i.val)}</strong>${i.u ? ' <span class="doc-unit">' + esc(i.u) + '</span>' : ''}</td>
+      <td class="c"><span class="doc-st ${i.st === 'FAIL' ? 'fail' : 'pass'}">${esc(i.st)}</span></td>
+    </tr>`).join('')}
+    </tbody></table>`;
+}
+function buildDoc(cfg) {
+  return `<div class="doc-page">
+    ${docHeader()}
+    ${docTitle(cfg.title, cfg.subtitle)}
+    ${cfg.meta ? docMeta(cfg.meta) : ''}
+    ${cfg.body || ''}
+    ${cfg.notes ? `<div class="doc-notes"><span class="doc-notes-lbl">Catatan</span><div>${esc(cfg.notes)}</div></div>` : ''}
+  </div>`;
+}
+function printTbl(id, title) {
+  const t = $(id).cloneNode(true);
+  t.querySelectorAll('.no-print').forEach(x => x.remove());
+  t.removeAttribute('id');
+  t.classList.add('doc-tbl');
+  printHtml(`<div class="doc-page">
+    ${docHeader()}
+    ${docTitle(title, 'Rekapitulasi Data Sistem Quality Control')}
+    ${t.outerHTML}
+  </div>`);
+}
+
+/* =========================================================
+   CSV
+========================================================= */
+function csv(id, fn) {
+  const rows = qa('tr', $(id)).map(tr => qa('th,td', tr).filter(c => !c.classList.contains('no-print')).map(c => {
+    let t = c.innerText.replace(/\s+/g, ' ').trim();
+    if (/^[=+@]/.test(t)) t = "'" + t;
+    return '"' + t.replace(/"/g, '""') + '"';
+  }).join(','));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff' + rows.join('\r\n')], { type: 'text/csv;charset=utf-8' }));
+  a.download = fn; document.body.appendChild(a); a.click(); a.remove();
+  toast('File ' + fn + ' diunduh', 'ok');
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+document.addEventListener('input', e => {
+  const inp = e.target.closest('[data-search]');
+  if (!inp) return;
+  const tid = inp.dataset.search, term = inp.value.toLowerCase().trim();
+  qa('tr', $(tid).querySelector('tbody')).forEach(tr => {
+    if (tr.querySelector('td[colspan]')) return;
+    tr.style.display = tr.innerText.toLowerCase().indexOf(term) >= 0 ? '' : 'none';
+  });
+});
+
+/* =========================================================
+   SKELETON / EMPTY
+========================================================= */
+function skeleton(tbodyId, widths, n) {
+  n = n || 5;
+  const rows = [];
+  for (let i = 0; i < n; i++) {
+    rows.push('<tr>' + widths.map(w => `<td><div class="skel" style="width:${w}%"></div></td>`).join('') + '</tr>');
+  }
+  const tbody = $(tbodyId);
+  if (!tbody) return;
+  tbody.classList.add('skel-body');
+  tbody.innerHTML = rows.join('');
+}
+function clearSkeleton(tbodyId) {
+  const tbody = $(tbodyId);
+  if (tbody) tbody.classList.remove('skel-body');
+}
+function empty(tbodyId, cols, title, sub) {
+  clearSkeleton(tbodyId);
+  $(tbodyId).innerHTML = `<tr><td colspan="${cols}"><div class="empty"><i class="fa-regular fa-folder-open"></i><div class="t">${esc(title)}</div><div class="s">${esc(sub || '')}</div></div></td></tr>`;
+}
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+function loadDash() {
+  const now = new Date();
+  $('dashDate').textContent = ID_DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + ID_MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+  ['dProd', 'dLot', 'dPass', 'dFail', 'dCoa', 'dDok', 'dExp', 'passRate'].forEach(id => {
+    if ($(id)) { $(id).textContent = '–'; $(id).classList.add('loading-num'); }
+  });
+  $('passBar').style.width = '0%';
+  skeleton('tb-recent', [60, 80, 50, 40], 5);
+
+  google.script.run
+    .withSuccessHandler(r => {
+      if (r && r.ok && r.data) return renderDash(r.data);
+      call('dashboard', [], d => renderDash(Object.assign({ recent: [] }, d)));
+    })
+    .withFailureHandler(() => {
+      call('dashboard', [], d => renderDash(Object.assign({ recent: [] }, d)));
+    })
+    .api(T, 'dashboardFull', []);
+}
+function renderDash(d) {
+  ['dProd', 'dLot', 'dPass', 'dFail', 'dCoa', 'dDok', 'dExp', 'passRate'].forEach(id => {
+    if ($(id)) $(id).classList.remove('loading-num');
+  });
+  $('dProd').textContent = d.produk != null ? d.produk : 0;
+  $('dLot').textContent = d.lot != null ? d.lot : 0;
+  $('dPass').textContent = d.pass != null ? d.pass : 0;
+  $('dFail').textContent = d.fail != null ? d.fail : 0;
+  $('dCoa').textContent = d.coa != null ? d.coa : 0;
+  $('dDok').textContent = d.dok != null ? d.dok : 0;
+  $('dExp').textContent = d.dokExp != null ? d.dokExp : 0;
+  const total = (d.pass || 0) + (d.fail || 0);
+  const rate = total ? Math.round(d.pass * 100 / total) : 0;
+  $('passRate').textContent = rate + '%';
+  $('passBar').style.width = rate + '%';
+
+  const recent = d.recent || [];
+  if (!recent.length) {
+    empty('tb-recent', 4, 'Belum ada inspeksi', 'Mulai input hasil uji');
+  } else {
+    clearSkeleton('tb-recent');
+    $('tb-recent').innerHTML = recent.map(r => `<tr>
+      <td><strong>${esc(r.lot)}</strong></td>
+      <td>${esc(r.kode)} <span style="color:var(--muted-2)">·</span> <span style="font-size:11.5px;color:var(--muted)">${esc((r.nama || '').slice(0, 24))}</span></td>
+      <td style="color:var(--muted)">${esc(fd(r.tu))}</td>
+      <td>${badge(r.st)}</td>
+    </tr>`).join('');
+  }
+}
+
+/* =========================================================
+   MASTER PRODUK — Inline form
+========================================================= */
+function resetProd() {
+  E.prod = null;
+  $('fProd').reset();
+  $('mKode').readOnly = false;
+  $('mKode').style.background = '';
+  $('params').innerHTML = '';
+  updateSpecCount();
+}
+
+const mProdModal = () => bootstrap.Modal.getOrCreateInstance($('mProd'));
+
+function openProd(p) {
+  const modal = mProdModal();
+
+  if (p) {
+    E.prod = p.kode;
+    $('mKode').value = p.kode;
+    $('mKode').readOnly = true;
+    $('mKode').style.background = '#f8fafc';
+    $('mNama').value = p.nama;
+    $('mKat').value = p.kat;
+    $('mSat').value = p.sat;
+    $('mHalal').value = p.halal;
+    $('mKem').value = p.kem;
+    $('mProdT').textContent = 'Edit Produk';
+    $('mProdSub').textContent = p.kode + ' — ' + p.nama;
+    $('mProdIcon').innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
+
+    $('params').innerHTML = '<div class="spec-empty"><i class="fa-solid fa-spinner fa-spin"></i>Memuat spesifikasi...</div>';
+    modal.show();
+    call('specs', [p.kode], s => {
+      $('params').innerHTML = '';
+      (s.length ? s : [{}]).forEach(addRow);
+      updateSpecCount();
+    });
+  } else {
+    E.prod = null;
+    $('mKode').readOnly = false;
+    $('mKode').style.background = '';
+    $('mProdT').textContent = 'Produk Baru';
+    $('mProdSub').textContent = 'Isi data produk dan parameter spesifikasi';
+    $('mProdIcon').innerHTML = '<i class="fa-solid fa-box"></i>';
+    addRow();
+    updateSpecCount();
+    modal.show();
+  }
+}
+
+/* Reset state saat modal ditutup */
+document.addEventListener('DOMContentLoaded', () => {
+  const el = $('mProd');
+  if (el) el.addEventListener('hidden.bs.modal', () => resetProd());
+});
+
+function addRow(s) {
+  s = s || {};
+  const list = $('params');
+  const emptyEl = list.querySelector('.spec-empty');
+  if (emptyEl) emptyEl.remove();
+  const idx = list.querySelectorAll('.spec-row').length + 1;
+
+  const d = document.createElement('div');
+  d.className = 'spec-row';
+  const tipe = [['RANGE', 'Min & Maks'], ['MIN', 'Hanya Min (≥)'], ['MAX', 'Hanya Maks (≤)'], ['TEXT', 'Teks / Kualitatif']];
+  d.innerHTML = `
+    <div class="spec-num">${idx}</div>
+    <input class="spec-input f-p" placeholder="Nama parameter" value="${esc(s.p)}" required>
+    <select class="spec-input f-t">
+      ${tipe.map(o => `<option value="${o[0]}"${(s.t || 'RANGE') === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('')}
+    </select>
+    <input class="spec-input minmax f-mn" placeholder="Min" value="${esc(s.mn)}">
+    <input class="spec-input minmax f-mx" placeholder="Maks" value="${esc(s.mx)}">
+    <input class="spec-input f-u" placeholder="Satuan" value="${esc(s.u)}">
+    <input class="spec-input f-k" placeholder="Keterangan" value="${esc(s.k)}">
+    <button type="button" class="spec-del" data-a="rmRow" title="Hapus parameter"><i class="fa-solid fa-xmark"></i></button>`;
+  list.appendChild(d);
+
+  d.querySelectorAll('.spec-input').forEach(inp => {
+    inp.addEventListener('focus', () => d.classList.add('focused'));
+    inp.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (!d.contains(document.activeElement)) d.classList.remove('focused');
+      }, 100);
+    });
+  });
+
+  const tg = () => {
+    const t = q('.f-t', d).value;
+    q('.f-mn', d).style.visibility = (t === 'RANGE' || t === 'MIN') ? 'visible' : 'hidden';
+    q('.f-mx', d).style.visibility = (t === 'RANGE' || t === 'MAX') ? 'visible' : 'hidden';
+  };
+  q('.f-t', d).onchange = tg; tg();
+
+  renumberSpecs();
+  updateSpecCount();
+
+  if (!s.p) setTimeout(() => q('.f-p', d).focus(), 100);
+  return d;
+}
+
+function renumberSpecs() {
+  qa('#params .spec-row').forEach((r, i) => {
+    const n = r.querySelector('.spec-num');
+    if (n) n.textContent = i + 1;
+  });
+}
+function updateSpecCount() {
+  const n = qa('#params .spec-row').length;
+  const el = $('specCount');
+  if (el) el.innerHTML = `<i class="fa-solid fa-list-check"></i><span>${n} parameter</span>`;
+  const labels = $('specLabels');
+  if (labels) labels.style.display = n ? '' : 'none';
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-a="rmRow"]');
+  if (!btn) return;
+  e.preventDefault();
+  const row = btn.closest('.spec-row');
+  if (!row) return;
+  const total = qa('#params .spec-row').length;
+  if (total <= 1) { toast('Minimal satu parameter spesifikasi.', 'warn'); return; }
+  row.style.animation = 'specOut 180ms ease forwards';
+  setTimeout(() => {
+    row.remove();
+    renumberSpecs();
+    updateSpecCount();
+  }, 180);
+});
+
+$('fProd').onsubmit = e => {
+  e.preventDefault();
+  const list = qa('#params .spec-row');
+  if (!list.length) return toast('Minimal satu parameter spesifikasi.', 'warn');
+
+  const spekList = list.map(r => ({
+    parameter: q('.f-p', r).value,
+    tipeBatas: q('.f-t', r).value,
+    nilaiMin: q('.f-mn', r).value,
+    nilaiMaks: q('.f-mx', r).value,
+    satuan: q('.f-u', r).value,
+    keterangan: q('.f-k', r).value
+  }));
+
+  const p = {
+    edit: !!E.prod,
+    kodeProduk: $('mKode').value,
+    namaProduk: $('mNama').value,
+    kategori: $('mKat').value,
+    satuan: $('mSat').value,
+    statusHalal: $('mHalal').value,
+    tipeKemasan: $('mKem').value,
+    spekList
+  };
+
+  call('saveProduk', [p], (d, m) => {
+    toast(m, 'ok');
+    mProdModal().hide();
+    resetProd();
+    loadProd();
+  }, $('bProd'), { btnText: 'Menyimpan...' });
+};
+
+function loadProd() {
+  skeleton('tb-prod', [80, 60, 50, 55, 60, 45], 5);
+  call('listProduk', [], d => {
+    D.prod = d;
+    clearSkeleton('tb-prod');
+    if (!d.length) return empty('tb-prod', 6, 'Belum ada produk', 'Klik "Produk Baru" untuk memulai');
+
+    $('tb-prod').innerHTML = d.map(r => `<tr>
+      <td>
+        <div class="prod-cell">
+          <span class="prod-code">${esc(r.kode)}</span>
+          <div class="prod-info">
+            <div class="prod-name">${esc(r.nama)}</div>
+            ${r.kat ? `<div class="prod-sub">${esc(r.kat)}</div>` : ''}
+          </div>
+        </div>
+      </td>
+      <td>${esc(r.kat)}</td>
+      <td>${esc(r.sat)}</td>
+      <td><span class="halal-pill${r.halal === 'Non-Halal' ? ' non' : ''}">${esc(r.halal)}</span></td>
+      <td><span class="pack-txt"><i class="fa-solid fa-box"></i>${esc(r.kem)}</span></td>
+      <td class="no-print text-center">
+        <div class="act-group">
+          <button class="act-btn view" data-a="specP" data-id="${esc(r.kode)}" title="Lihat spesifikasi"><i class="fa-solid fa-eye"></i></button>
+          <button class="act-btn edit" data-a="editP" data-id="${esc(r.kode)}" title="Edit"><i class="fa-solid fa-pen"></i></button>
+          <button class="act-btn print" data-a="printSpecP" data-id="${esc(r.kode)}" title="Cetak"><i class="fa-solid fa-print"></i></button>
+          <button class="act-btn del" data-a="delP" data-id="${esc(r.kode)}" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
+  });
+}
+
+/* =========================================================
+   SPEC VIEW MODAL — redesigned
+========================================================= */
+const SPEC_TYPE_LABEL = { RANGE: 'Range', MIN: 'Minimum', MAX: 'Maksimum', TEXT: 'Kualitatif' };
+
+function specViewHtml(s) {
+  const info = `<div class="spec-info-grid">
+    <div class="spec-info-item"><div class="lbl">Kategori</div><div class="val">${esc(s.kat || '-')}</div></div>
+    <div class="spec-info-item"><div class="lbl">Satuan</div><div class="val">${esc(s.sat || '-')}</div></div>
+    <div class="spec-info-item"><div class="lbl">Status Halal</div><div class="val">${esc(s.halal || '-')}</div></div>
+    <div class="spec-info-item"><div class="lbl">Kemasan</div><div class="val">${esc(s.kem || '-')}</div></div>
+  </div>`;
+
+  if (!s.list.length) {
+    return info + `<div class="spec-view-body">
+      <div class="spec-empty-view">
+        <i class="fa-regular fa-clipboard"></i>
+        <div class="t">Belum ada parameter</div>
+        <div class="s">Tambahkan melalui tombol Edit pada produk ini</div>
+      </div>
+    </div>`;
+  }
+
+  const items = s.list.map((i, k) => {
+    const specTxt = fmtSpec(i) + (i.u ? ' ' + i.u : '');
+    const ket = i.k && i.k.trim() ? i.k : '—';
+    return `<div class="spec-view-item">
+      <div class="sv-head">
+        <div class="sv-num">${k + 1}</div>
+        <div class="sv-name">
+          ${esc(i.p)}
+          <span class="sv-type">${esc(SPEC_TYPE_LABEL[i.t] || i.t)}</span>
+        </div>
+      </div>
+      <div class="sv-body">
+        <div class="sv-cell">
+          <div class="sv-lbl">Spesifikasi</div>
+          <div class="sv-val spec-range">${esc(specTxt)}</div>
+        </div>
+        <div class="sv-cell">
+          <div class="sv-lbl">Satuan</div>
+          <div class="sv-val${i.u ? '' : ' muted'}">${esc(i.u || '—')}</div>
+        </div>
+        <div class="sv-cell">
+          <div class="sv-lbl">Keterangan</div>
+          <div class="sv-val${ket === '—' ? ' muted' : ''}">${esc(ket)}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return info + `<div class="spec-view-body">
+    <div class="spec-view-title">
+      <span class="sv-t">Daftar Parameter Uji</span>
+      <span class="sv-badge">${s.list.length} parameter</span>
+    </div>
+    ${items}
+  </div>`;
+}
+
+function showSpec(kode, print) {
+  const p = D.prod.find(x => x.kode === kode);
+  const modal = bootstrap.Modal.getOrCreateInstance($('mSpec'));
+
+  $('mSpecT').textContent = 'Spesifikasi Mutu Produk';
+  $('mSpecSub').innerHTML = `<span class="prod-code">${esc(kode)}</span> <span>${esc(p ? p.nama : '')}</span>`;
+
+  call('specs', [kode], list => {
+    E.spec = {
+      kode: kode,
+      nama: p ? p.nama : '',
+      kat: p ? p.kat : '',
+      sat: p ? p.sat : '',
+      halal: p ? p.halal : '',
+      kem: p ? p.kem : '',
+      list: list
+    };
+    if (print) return printHtml(specDocHtml(E.spec));
+    $('mSpecB').innerHTML = specViewHtml(E.spec);
+    modal.show();
+  });
+}
+
+/* Print-spec document (dokumen cetak) */
+function specDocHtml(s) {
+  const rows = s.list.map((i, k) => `<tr>
+    <td class="c">${k + 1}</td><td><strong>${esc(i.p)}</strong></td>
+    <td>${esc(fmtSpec(i))}${i.u ? ' <span class="doc-unit">' + esc(i.u) + '</span>' : ''}</td>
+    <td>${esc(i.u || '-')}</td><td>${esc(i.k || '-')}</td>
+  </tr>`).join('') || `<tr><td colspan="5" class="c doc-empty">Belum ada parameter spesifikasi</td></tr>`;
+  return `<div class="doc-page">
+    ${docHeader()}
+    ${docTitle('Spesifikasi Mutu Produk', s.nama + ' (' + s.kode + ')')}
+    ${docMeta([['Kode Produk', esc(s.kode)], ['Nama Produk', esc(s.nama)]])}
+    <table class="doc-tbl">
+      <thead><tr><th style="width:6%">No</th><th style="width:32%">Parameter Uji</th><th style="width:26%">Spesifikasi</th><th style="width:14%">Satuan</th><th style="width:22%">Keterangan</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+/* =========================================================
+   INSPEKSI
+========================================================= */
+function resetUji() {
+  E.uji = null; E.kode = null; E.items = [];
+  $('fUji').reset(); $('uLot').readOnly = false; $('uProd').disabled = false;
+  $('uBox').classList.add('d-none'); $('uParams').innerHTML = '';
+  $('cUji').classList.add('d-none');
+}
+function openUji() {
+  resetForms();
+  if (!D.prod.length) { toast('Belum ada produk. Tambahkan produk dulu di Master Produk.', 'warn'); return go('master'); }
+  $('tUji').textContent = 'Input Hasil Uji Lot / Batch';
+  $('uProd').innerHTML = '<option value="">-- Pilih Produk --</option>' + D.prod.map(p =>
+    `<option value="${esc(p.kode)}">${esc(p.kode)} — ${esc(p.nama)}</option>`).join('');
+  $('cUji').classList.remove('d-none');
+  $('cUji').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function buildParams(items) {
+  E.items = items;
+  $('uParams').innerHTML = items.map((i, k) => `<div class="row g-2 mb-2 align-items-center pb-2" style="border-bottom:1px solid var(--line)">
+    <div class="col-md-4"><strong>${esc(i.p)}</strong> <span class="text-muted small">${esc(i.u || '')}</span></div>
+    <div class="col-md-3"><span class="badge bg-light">${esc(fmtSpec(i))}</span></div>
+    <div class="col-md-3"><input class="form-control form-control-sm u-val" data-k="${k}" value="${esc(i.val)}" inputmode="decimal" required></div>
+    <div class="col-md-2">${i.t === 'TEXT'
+      ? `<select class="form-select form-select-sm u-st" data-k="${k}"><option value="PASS"${i.st === 'FAIL' ? '' : ' selected'}>Sesuai</option><option value="FAIL"${i.st === 'FAIL' ? ' selected' : ''}>Tidak sesuai</option></select>`
+      : '<span class="small text-muted">Otomatis</span>'}</div></div>`).join('');
+  $('uBox').classList.remove('d-none');
+}
+$('uProd').onchange = () => {
+  if (E.uji) return;
+  const k = $('uProd').value;
+  if (!k) {
+    $('uBox').classList.add('d-none');
+    $('uLot').value = '';
+    return;
+  }
+  // Auto-generate nomor lot
+  $('uLot').value = genLot_(k);
+
+  // Load spesifikasi
+  call('specs', [k], s => {
+    if (!s.length) { toast('Produk ini belum memiliki spesifikasi.', 'warn'); $('uBox').classList.add('d-none'); return; }
+    buildParams(s.map(x => Object.assign({ val: '', st: 'PASS' }, x)));
+  });
+};
+
+/**
+ * Generate nomor lot: KodeProduk.NomorBatch.DDMMYY.EXP
+ * Contoh: 03.01.230426.27
+ */
+function genLot_(kode) {
+  if (!kode) return '';
+  // Ambil angka terakhir dari kode produk
+  const m = String(kode).match(/(\d+)(?!.*\d)/);
+  const prodNum = m ? m[1].padStart(2, '0') : '00';
+
+  // Cari batch max dari lot yang sudah ada untuk produk ini
+  let maxBatch = 0;
+  (D.uji || []).forEach(u => {
+    if (String(u.kode).trim() !== String(kode).trim()) return;
+    const lm = String(u.lot).match(/^\d{2}\.(\d{2,3})\.\d{6}\.\d{2}$/);
+    if (lm) {
+      const b = parseInt(lm[1], 10);
+      if (b > maxBatch) maxBatch = b;
+    }
+  });
+  const nextBatch = String(maxBatch + 1).padStart(2, '0');
+
+  // Tanggal hari ini dalam DDMMYY
+  const now = new Date();
+  const dd = String(now.getDate()).padStart(2, '0');
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const yy = String(now.getFullYear()).slice(-2);
+  const ddmm = dd + mm + yy;
+
+  // Tahun exp = tahun ini + 1, 2 digit terakhir
+  const expYy = String(now.getFullYear() + 1).slice(-2);
+
+  return `${prodNum}.${nextBatch}.${ddmm}.${expYy}`;
+}
+$('fUji').onsubmit = e => {
+  e.preventDefault();
+  if (!E.items.length) return toast('Pilih produk yang sudah memiliki spesifikasi.', 'warn');
+  const hasil = {};
+  E.items.forEach((i, k) => {
+    const s = q('.u-st[data-k="' + k + '"]');
+    hasil[i.p] = { val: q('.u-val[data-k="' + k + '"]').value, st: s ? s.value : undefined };
+  });
+  const p = {
+    idUji: E.uji, kodeProduk: E.uji ? E.kode : $('uProd').value,
+    noLot: $('uLot').value, tglSampling: $('uTs').value, tglUji: $('uTu').value,
+    inspector: $('uInsp').value, catatan: $('uCat').value, hasil
+  };
+  call(E.uji ? 'updateUji' : 'saveUji', [p], (d, m) => { toast(m, 'ok'); resetUji(); loadUji(); }, $('bUji'), { btnText: 'Menyimpan...' });
+};
+function loadUji() {
+  skeleton('tb-uji', [55, 50, 55, 55, 65, 45, 65, 45], 5);
+  const afterProd = () => call('listUji', [], d => {
+    D.uji = d;
+    clearSkeleton('tb-uji');
+    if (!d.length) return empty('tb-uji', 8, 'Belum ada hasil inspeksi', 'Klik "Input Hasil Uji" untuk memulai');
+    $('tb-uji').innerHTML = d.map(r => `<tr>
+      <td><strong>${esc(r.lot)}</strong></td><td>${esc(r.kode)}</td><td>${esc(fd(r.ts))}</td><td>${esc(fd(r.tu))}</td>
+      <td>${esc(r.insp)}</td><td>${badge(r.st)}</td><td>${esc(r.cat)}</td>
+      <td class="no-print"><div class="actions">
+        <button class="btn btn-outline-warning btn-sm" data-a="editU" data-id="${esc(r.id)}" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+        <button class="btn btn-outline-primary btn-sm" data-a="printU" data-id="${esc(r.id)}" title="Cetak"><i class="fa-solid fa-print"></i></button>
+        <button class="btn btn-outline-danger btn-sm" data-a="delU" data-id="${esc(r.id)}" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+      </div></td></tr>`).join('');
+  });
+  if (D.prod.length) return afterProd();
+  call('listProduk', [], pr => { D.prod = pr; afterProd(); });
+}
+function editUji(id) {
+  const r = D.uji.find(x => x.id === id); if (!r) return;
+  resetForms();
+  E.uji = id; E.kode = r.kode;
+  $('uProd').innerHTML = `<option value="${esc(r.kode)}">${esc(r.kode)} — ${esc(r.nama)}</option>`;
+  $('uProd').disabled = true;
+  $('uLot').value = r.lot; $('uLot').readOnly = true;
+  $('uTs').value = r.ts; $('uTu').value = r.tu;
+  $('uInsp').value = r.insp; $('uCat').value = r.cat === '-' ? '' : r.cat;
+  $('tUji').textContent = 'Edit Hasil Uji Lot ' + r.lot;
+  buildParams(r.items.map(i => Object.assign({}, i)));
+  $('cUji').classList.remove('d-none');
+  $('cUji').scrollIntoView({ behavior: 'smooth' });
+}
+function printUji(id) {
+  const r = D.uji.find(x => x.id === id); if (!r) return;
+  const allPass = r.items.every(i => i.st !== 'FAIL');
+  printHtml(buildDoc({
+    title: 'Laporan Hasil Uji Laboratorium',
+    subtitle: 'Laboratory Test Report',
+    meta: [
+      ['No. Lot / Batch', '<strong>' + esc(r.lot) + '</strong>'],
+      ['Kode Produk', esc(r.kode)],
+      ['Nama Produk', esc(r.nama || '-')],
+      ['Inspector', esc(r.insp)],
+      ['Tanggal Sampling', esc(fd(r.ts))],
+      ['Tanggal Uji', esc(fd(r.tu))],
+      ['Status Akhir', '<span class="doc-st ' + (allPass ? 'pass' : 'fail') + '">' + esc(r.st) + '</span>'],
+      ['Jumlah Parameter', String(r.items.length) + ' parameter']
+    ],
+    body: docItemsTable(r.items),
+    notes: r.cat && r.cat !== '-' ? r.cat : ''
+  }));
+}
+
+/* =========================================================
+   COA
+========================================================= */
+function resetCOA() {
+  E.coa = null; $('fCOA').reset();
+  $('cLot').disabled = false; $('cLot').required = true;
+  $('cMfg').value = '';
+  $('cCOA').classList.add('d-none');
+}
+function loadCOA() {
+  skeleton('tb-coa', [75, 55, 50, 60, 60, 55], 5);
+  call('listUji', [], u => {
+    D.uji = u;
+    call('listCOA', [], c => { D.coa = c; renderCOA(); });
+  });
+}
+function renderCOA() {
+  const has = new Set(D.coa.map(c => c.kode.trim() + '|' + c.lot.trim()));
+  const seen = new Set();
+  const opts = D.uji.filter(x => {
+    const key = x.kode.trim() + '|' + x.lot.trim();
+    if (x.st !== 'PASS' || has.has(key) || seen.has(key)) return false;
+    seen.add(key); return true;
+  });
+  $('cLot').innerHTML = '<option value="">-- Pilih lot PASS tanpa COA --</option>' +
+    opts.map(x => `<option value="${esc(x.id)}">${esc(x.lot)} | ${esc(x.kode)} | ${esc(fd(x.tu))}</option>`).join('');
+  if (!D.coa.length) return empty('tb-coa', 6, 'Belum ada COA', 'Terbitkan COA untuk lot yang lolos QC');
+  clearSkeleton('tb-coa');
+  $('tb-coa').innerHTML = D.coa.map(c => `<tr>
+    <td><strong>${esc(c.no)}</strong></td><td>${esc(c.kode)}</td><td>${esc(c.lot)}</td>
+    <td>${esc(fd(c.rilis))}</td><td>${esc(fd(c.exp))}</td>
+    <td class="no-print"><div class="actions">
+      <button class="btn btn-outline-warning btn-sm" data-a="editC" data-id="${esc(c.no)}" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+      <button class="btn btn-outline-success btn-sm" data-a="printC" data-id="${esc(c.no)}" title="Cetak COA"><i class="fa-solid fa-print"></i></button>
+      <button class="btn btn-outline-danger btn-sm" data-a="delC" data-id="${esc(c.no)}" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+    </div></td></tr>`).join('');
+}
+function openCOA() {
+  resetForms();
+  if (!D.uji.length) { toast('Belum ada data hasil uji.', 'warn'); return; }
+  $('tCOA').textContent = 'Terbitkan COA Baru';
+  $('cCOA').classList.remove('d-none');
+  $('cCOA').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+/* Auto-calc Exp Date = Mfg + 1 tahun */
+$('cMfg').onchange = () => {
+  const mfg = $('cMfg').value;
+  if (!mfg) return;
+  const d = new Date(mfg + 'T00:00:00');
+  if (isNaN(d)) return;
+  d.setFullYear(d.getFullYear() + 1);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  $('cExp').value = `${yyyy}-${mm}-${dd}`;
+};
+
+/* Auto-fill Mfg dari lot (parse DDMMYY di segmen ke-3) */
+$('cLot').addEventListener('change', () => {
+  const r = D.uji.find(x => x.id === $('cLot').value);
+  if (!r) return;
+  const m = String(r.lot).match(/^\d{2}\.\d{2,3}\.(\d{2})(\d{2})(\d{2})\.\d{2}$/);
+  if (m && !$('cMfg').value) {
+    const [_, dd, mm, yy] = m;
+    const yyyy = (parseInt(yy, 10) >= 70 ? '19' : '20') + yy;
+    $('cMfg').value = `${yyyy}-${mm}-${dd}`;
+    $('cMfg').onchange();
+  }
+}, { once: false });
+function editCOA(no) {
+  const c = D.coa.find(x => x.no === no); if (!c) return;
+  resetForms();
+  E.coa = no;
+  $('cLot').innerHTML = `<option value="">${esc(c.lot)}</option>`;
+  $('cLot').disabled = true; $('cLot').required = false;
+  $('cKode').value = c.kode;
+  $('cMfg').value = c.mfg || '';
+  $('cRilis').value = c.rilis;
+  $('cExp').value = c.exp;
+  $('cTTD').value = c.ttd;
+  $('tCOA').textContent = 'Edit COA ' + no;
+  $('cCOA').classList.remove('d-none');
+  $('cCOA').scrollIntoView({ behavior: 'smooth' });
+}
+$('fCOA').onsubmit = e => {
+  e.preventDefault();
+  const p = {
+    noCOA: E.coa, idUji: $('cLot').value,
+    tglMfg: $('cMfg').value,
+    tglRilis: $('cRilis').value, tglExpired: $('cExp').value,
+    ttd: $('cTTD').value
+  };
+  call(E.coa ? 'updateCOA' : 'issueCOA', [p], (d, m) => {
+    toast(m, 'ok'); resetCOA(); loadCOA();
+  }, $('bCOA'), { btnText: 'Menyimpan...' });
+};
+function printCOA(no) {
+  const c = D.coa.find(x => x.no === no); if (!c) return;
+  printHtml(coaDocHtml(c));
+}
+
+function coaDocHtml(c) {
+  // Print date hari ini
+  const today = new Date();
+  const printDate =
+    String(today.getDate()).padStart(2, '0') + '-' +
+    String(today.getMonth() + 1).padStart(2, '0') + '-' +
+    today.getFullYear();
+
+  // Cari data produk (untuk INCI name — pakai field kategori)
+  const pData = D.prod.find(x => x.kode === c.kode);
+  const inci = pData && pData.kat ? pData.kat : '';
+
+  // Rows tabel: Test | Specification | Test results
+  const rows = c.items.map(i => {
+    const spec = fmtSpec(i) + (i.u ? ' ' + i.u : '');
+    const result = (i.val || '-') + (i.u && i.val ? ' ' + i.u : '');
+    return `<tr>
+      <td>${esc(i.p)}</td>
+      <td>${esc(spec)}</td>
+      <td>${esc(result)}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="3" style="text-align:center;color:#888;font-style:italic">Tidak ada data parameter</td></tr>';
+
+ // Mfg. Date: dari COA, fallback ke tgl sampling
+  const mfgDate = c.mfg ? fd(c.mfg) : (c.ts ? fd(c.ts) : '-');
+
+  return `<div class="coa-page">
+    <div class="coa-head">
+      <img class="coa-logo" src="${LOGO}" alt="INBIONUSA" onerror="this.style.display='none'">
+      <div class="coa-company">
+        <div class="coa-name">PT INOVASI BIOKEM NUSANTARA (INBIONUSA)</div>
+        <div>Kawasan Bukit Indah, Jalan Bukit Akasia V Kavling A II No 19,</div>
+        <div>Dangdeur, Kab. Purwakarta, Jawa Barat 41181, Indonesia</div>
+        <div>Telp.: (+62) 822 2564 7544 || marketing@inbionusa.com</div>
+      </div>
+    </div>
+
+    <h1 class="coa-title">Certificate of Analysis</h1>
+    <div class="coa-rule"></div>
+
+    <div class="coa-meta">
+      <div class="coa-product">${esc(c.produk || c.kode)}</div>
+      ${inci ? `<div class="coa-inci">INCI Name: ${esc(inci)}</div>` : ''}
+      <div class="coa-meta-grid">
+        <div>Certificate</div><div class="colon">:</div><div>${esc(c.no)}</div>
+        <div>Batch number</div><div class="colon">:</div><div>${esc(c.lot)}</div>
+        <div>Mfg. Date</div><div class="colon">:</div><div>${esc(mfgDate)}</div>
+        <div>Exp. Date</div><div class="colon">:</div><div>${esc(fd(c.exp))}</div>
+        <div>Print Date</div><div class="colon">:</div><div>${printDate}</div>
+        <div>Page / Pages</div><div class="colon">:</div><div>1/1</div>
+      </div>
+    </div>
+
+    <table class="coa-tbl">
+      <thead>
+        <tr>
+          <th>Test</th>
+          <th>Specification</th>
+          <th>Test results</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+
+    <div class="coa-spacer"></div>
+
+    <div class="coa-foot">
+      <span>marketing@inbionusa.com</span>
+      <span>inbionusa.com</span>
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   DOKUMEN
+========================================================= */
+function loadDocs() {
+  skeleton('tb-doc', [55, 80, 55, 55, 55, 50, 50], 4);
+  call('listDocs', [], d => {
+    D.docs = d;
+    const now = todayStr();
+    clearSkeleton('tb-doc');
+    if (!d.length) return empty('tb-doc', 7, 'Belum ada dokumen', 'Upload dokumen mutu untuk memulai');
+    $('tb-doc').innerHTML = d.map(r => {
+      const days = Math.floor((new Date(r.k) - new Date(now)) / 86400000);
+      const st = r.k < now
+        ? '<span class="badge bg-danger">Kadaluarsa</span>'
+        : days <= 30
+          ? '<span class="badge bg-warning">Berakhir ' + days + ' hari</span>'
+          : '<span class="badge bg-success">Berlaku</span>';
+      const lk = /^https:\/\//.test(r.link)
+        ? `<a class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener" href="${esc(r.link)}" title="Buka file"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : '';
+      return `<tr>
+        <td><code style="font-size:11px">${esc(r.id)}</code></td>
+        <td>${esc(r.judul)}</td>
+        <td><span class="badge bg-info">${esc(r.kat)}</span></td>
+        <td>${esc(fd(r.b))}</td>
+        <td>${esc(fd(r.k))}</td>
+        <td>${st}</td>
+        <td class="no-print"><div class="actions">${lk}
+          <button class="btn btn-outline-danger btn-sm" data-a="delD" data-id="${esc(r.id)}" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+        </div></td></tr>`;
+    }).join('');
+  });
+}
+$('fDoc').onsubmit = e => {
+  e.preventDefault();
+  const f = $('dFile').files[0], b = $('bDoc');
+  const p = {
+    judul: $('dJudul').value, kategori: $('dKat').value,
+    tglBerlaku: $('dB').value, tglKadaluarsa: $('dK').value, linkDrive: $('dLink').value
+  };
+  const send = fl => call('uploadDoc', [fl, p], (d, m) => {
+    toast(m, 'ok'); $('fDoc').reset(); $('cDoc').classList.add('d-none'); loadDocs();
+  }, b, { btnText: 'Mengunggah...' });
+  if (!f) return send(null);
+  if (f.type !== 'application/pdf') return toast('Hanya file PDF yang diterima.', 'warn');
+  if (f.size > 8 * 1024 * 1024) return toast('Ukuran file maksimal 8 MB.', 'warn');
+  b.disabled = true;
+  b.innerHTML = '<span class="spin"></span>Membaca file...';
+  const r = new FileReader();
+  r.onload = () => send({ data: r.result.split(',')[1], mimeType: f.type, fileName: f.name });
+  r.onerror = () => { b.disabled = false; b.innerHTML = '<i class="fa-solid fa-cloud-arrow-up me-1"></i>Simpan Arsip'; toast('File gagal dibaca.', 'err'); };
+  r.readAsDataURL(f);
+};
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+const ACT = {
+  logout: () => out(),
+  pw: () => {
+    const a = prompt('Password lama:'); if (!a) return;
+    const n = prompt('Password baru (minimal 8 karakter):'); if (!n) return;
+    call('gantiPassword', [a, n], (d, m) => toast(m, 'ok'), null, { silent: true });
+  },
+  cancel: () => resetForms(),
+  goto: id => go(id),
+  openProd: () => openProd(),
+  openUji: () => openUji(),
+  openCOA: () => openCOA(),
+  openDoc: () => { resetForms(); $('cDoc').classList.remove('d-none'); $('cDoc').scrollIntoView({ behavior: 'smooth' }); },
+  addRow: () => addRow(),
+  editP: k => {
+    const p = D.prod.find(x => x.kode === k); if (!p) return;
+    openProd(p);
+  },
+  delP: k => confirmDlg('Hapus produk "' + k + '" beserta seluruh spesifikasinya? Tindakan ini tidak dapat dibatalkan.', { title: 'Hapus Produk' })
+    .then(ok => { if (ok) call('deleteProduk', [k], (d, m) => { toast(m, 'ok'); loadProd(); }); }),
+  specP: k => showSpec(k, false),
+  printSpecP: k => showSpec(k, true),
+  printSpec: () => printHtml(specDocHtml(E.spec)),
+  editU: id => editUji(id),
+  printU: id => printUji(id),
+  delU: id => confirmDlg('Hapus hasil uji ini? Tindakan tidak dapat dibatalkan.', { title: 'Hapus Hasil Uji' })
+    .then(ok => { if (ok) call('deleteUji', [id], (d, m) => { toast(m, 'ok'); loadUji(); }); }),
+  editC: no => editCOA(no),
+  printC: no => printCOA(no),
+  delC: no => confirmDlg('Hapus COA ' + no + '? Tindakan tidak dapat dibatalkan.', { title: 'Hapus COA' })
+    .then(ok => { if (ok) call('deleteCOA', [no], (d, m) => { toast(m, 'ok'); loadCOA(); }); }),
+  delD: id => confirmDlg('Hapus data arsip ini? File di Drive tidak ikut terhapus.', { title: 'Hapus Dokumen', danger: false, okText: 'Ya, Hapus' })
+    .then(ok => { if (ok) call('deleteDoc', [id], (d, m) => { toast(m, 'ok'); loadDocs(); }); }),
+  printTbl: (id, b) => printTbl(id, b.dataset.t),
+  csv: (id, b) => csv(id, b.dataset.f)
+};
+document.addEventListener('click', e => {
+  const nv = e.target.closest('.nv');
+  if (nv) { e.preventDefault(); return go(nv.dataset.p); }
+  const b = e.target.closest('[data-a]');
+  if (b && ACT[b.dataset.a]) { e.preventDefault(); ACT[b.dataset.a](b.dataset.id, b); }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+
+/* Login: toggle password + tahun */
+(function initLoginExtras(){
+  const tgl = document.getElementById('togglePass');
+  if (tgl) {
+    tgl.addEventListener('click', () => {
+      const inp = document.getElementById('lPass');
+      const ico = tgl.querySelector('i');
+      if (!inp) return;
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        ico.className = 'fa-regular fa-eye-slash';
+      } else {
+        inp.type = 'password';
+        ico.className = 'fa-regular fa-eye';
+      }
+    });
+  }
+  const y = document.getElementById('logYear');
+  if (y) y.textContent = new Date().getFullYear();
+})();
+</script>
+
+<!-- PRINT STYLESHEET -->
+<style>
+.doc-page{background:#fff;color:#0f172a;font-family:var(--font);font-size:11px;line-height:1.45;padding:26px 26px 22px;max-width:820px;margin:0 auto}
+/* ============ COA DOCUMENT (match formal sample) ============ */
+.coa-page{
+  width:210mm;min-height:297mm;
+  background:#fff;
+  padding:15.5mm 19.5mm 16mm;
+  margin:0 auto;
+  font-family:Arial,Helvetica,sans-serif;
+  color:#111;
+  font-size:10.5pt;
+  position:relative;
+  display:flex;flex-direction:column;
+  min-height:calc(297mm - 22mm); /* A4 minus margin @page */
+}
+.coa-head{
+  display:flex;align-items:flex-start;gap:7mm;
+  height:auto;min-height:32mm;
+  margin-bottom:0;
+}
+.coa-logo{
+  width:32mm;height:32mm;object-fit:contain;flex-shrink:0;
+}
+.coa-company{
+  padding-top:1.5mm;line-height:1.42;font-size:10.5pt;
+}
+.coa-company .coa-name{
+  font-size:14pt;font-weight:700;line-height:1.2;
+  margin-bottom:1.5mm;color:#000;
+}
+.coa-company div:not(.coa-name){font-size:10.5pt;color:#111}
+
+.coa-title{
+  font-size:18pt;font-weight:700;
+  text-align:center;
+  margin:0 0 6.5mm;
+  letter-spacing:0;
+  color:#000;
+  text-transform:none;
+}
+.coa-rule{
+  border-top:2px solid #111;
+  margin:0 0 3mm;
+}
+.coa-meta{
+  padding:0 0 3mm;
+  border-bottom:2px solid #111;
+  margin-bottom:6mm;
+}
+.coa-product{
+  font-size:11.5pt;font-weight:700;
+  margin-bottom:1mm;color:#000;
+  text-transform:uppercase;
+}
+.coa-inci{
+  font-size:11pt;font-style:italic;
+  margin-bottom:6mm;color:#111;
+}
+.coa-meta-grid{
+  display:grid;
+  grid-template-columns:37mm 5mm 1fr;
+  font-size:11pt;
+  line-height:1.52;
+  color:#111;
+}
+.coa-meta-grid .colon{text-align:center}
+
+.coa-tbl{
+  width:100%;
+  border-collapse:collapse;
+  font-size:10.8pt;
+  table-layout:fixed;
+}
+.coa-tbl thead th{
+  font-weight:700;
+  padding:1.25mm 1.8mm;
+  text-align:left;
+  border-top:1px solid #555;
+  border-bottom:0;
+  border-left:0;border-right:0;
+  background:#fff;color:#111;
+  text-transform:none;letter-spacing:0;
+  font-size:10.8pt;
+}
+.coa-tbl tbody td{
+  padding:1.25mm 1.8mm;
+  text-align:left;
+  border-top:1px solid #888;
+  border-bottom:0;border-left:0;border-right:0;
+  line-height:1.12;
+  color:#111;
+  background:transparent;
+  font-size:10.8pt;
+}
+.coa-tbl th:nth-child(1),
+.coa-tbl td:nth-child(1){width:61%}
+.coa-tbl th:nth-child(2),
+.coa-tbl td:nth-child(2){width:20%;text-align:center}
+.coa-tbl th:nth-child(3),
+.coa-tbl td:nth-child(3){width:19%;text-align:center}
+.coa-tbl tr{break-inside:avoid;page-break-inside:avoid}
+
+.coa-spacer{flex:1}
+.coa-foot{
+  display:flex;justify-content:space-between;
+  font-size:9.5pt;color:#111;
+  padding-top:8mm;
+  margin-top:auto;
+}
+.doc-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #047857;padding-bottom:10px;margin-bottom:0}
+.doc-brand{display:flex;gap:14px;align-items:flex-start}
+.doc-logo{height:52px;width:auto;object-fit:contain;flex-shrink:0}
+.doc-brand-txt h1{font-size:14px;font-weight:700;color:#064e3b;margin:0 0 3px;letter-spacing:.02em;line-height:1.2}
+.doc-brand-txt p{margin:0;font-size:9px;color:#475569;line-height:1.5}
+.doc-title{text-align:center;margin:22px 0 16px}
+.doc-title h2{font-size:15px;font-weight:700;color:#0f172a;letter-spacing:.16em;text-transform:uppercase;margin:0}
+.doc-title-sub{font-size:9.5px;color:#64748b;letter-spacing:.08em;margin-top:4px;text-transform:uppercase}
+.doc-rule{width:60px;height:2px;background:#047857;margin:10px auto 0}
+.doc-meta{width:100%;border-collapse:collapse;margin-bottom:16px;border:1px solid #cbd5e1;font-size:10px}
+.doc-meta th{background:#f1f5f9;color:#334155;font-weight:600;padding:6px 10px;text-align:left;width:32%;border:1px solid #cbd5e1;letter-spacing:.02em;vertical-align:top}
+.doc-meta td{padding:6px 10px;border:1px solid #cbd5e1;color:#0f172a;vertical-align:top}
+.doc-tbl{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:14px}
+.doc-tbl thead{display:table-header-group}
+.doc-tbl thead th{background:#047857;color:#fff;font-weight:600;padding:7px 9px;text-align:left;font-size:9px;letter-spacing:.06em;text-transform:uppercase;border:1px solid #047857}
+.doc-tbl tbody td{padding:6px 9px;border:1px solid #cbd5e1;vertical-align:top;color:#1e293b}
+.doc-tbl tbody tr:nth-child(even){background:#f8fafc}
+.doc-tbl td.c{text-align:center}
+.doc-tbl tr{break-inside:avoid;page-break-inside:avoid}
+.doc-note{font-size:8.5px;color:#64748b;margin-top:2px;font-style:italic}
+.doc-unit{color:#64748b;font-size:9px;font-weight:400}
+.doc-empty{text-align:center;color:#94a3b8;font-style:italic;padding:14px!important}
+.doc-st{display:inline-block;padding:2px 8px;font-weight:700;font-size:9px;letter-spacing:.08em;text-transform:uppercase;border:1px solid}
+.doc-st.pass{color:#047857;background:#ecfdf5;border-color:#a7f3d0}
+.doc-st.fail{color:#b91c1c;background:#fef2f2;border-color:#fecaca}
+.doc-notes{margin:12px 0 18px;padding:10px 12px;background:#f8fafc;border-left:3px solid #047857;font-size:9.5px;color:#334155}
+.doc-notes-lbl{display:block;font-weight:700;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:#047857;margin-bottom:3px}
+
+@media print{
+  @page{size:A4 portrait;margin:12mm 11mm 10mm}
+  html,body{background:#fff!important}
+  body.printing>*:not(#printRoot){display:none!important}
+  body.printing #printRoot{display:block!important}
+  #printRoot{padding:0;margin:0}
+  .doc-page{padding:0;max-width:none;width:100%;font-size:9.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-family:'DM Sans',sans-serif}
+  .doc-head{border-bottom-width:2px;page-break-after:avoid}
+  .doc-title{page-break-after:avoid;margin:14mm 0 6mm}
+  .doc-meta{page-break-inside:avoid}
+  .doc-tbl thead th{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#047857!important;color:#fff!important}
+  .doc-tbl tbody tr:nth-child(even){-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#f8fafc!important}
+  .doc-st{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .doc-st.pass{background:#ecfdf5!important;color:#047857!important}
+  .doc-st.fail{background:#fef2f2!important;color:#b91c1c!important}
+  .doc-notes{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#f8fafc!important;page-break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .coa-page{
+    padding:0;
+    max-width:none;
+    width:100%;
+    min-height:0;
+    margin:0;
+    box-shadow:none;
+    font-size:10.5pt;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+    page-break-after:always;
+  }
+  .coa-page:last-child{page-break-after:auto}
+  .coa-head{page-break-after:avoid}
+  .coa-title,.coa-rule,.coa-meta{page-break-after:avoid}
+  .coa-tbl thead{display:table-header-group}
+}
+</style>
+</body>
+</html>
